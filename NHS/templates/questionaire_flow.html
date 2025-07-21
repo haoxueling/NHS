@@ -1,0 +1,44 @@
+<div class="container">
+  <h3>问卷填写（共3份）</h3>
+  <div class="progress mb-4">
+    <div class="progress-bar" style="width: 33%" id="progressBar">已完成 0/3</div>
+  </div>
+
+  <div id="stepIndicator">
+    <p>当前需完成：<span id="currentQuestionnaire">Duke Activity Status Index（DASI）</span></p>
+  </div>
+
+  <button class="btn btn-primary" onclick="startCurrentQuestionnaire()">开始填写</button>
+</div>
+
+<script>
+// 初始化进度
+let progress = JSON.parse(localStorage.getItem('questionnaireProgress')) || {
+  dasi: 'incomplete',
+  phq4: 'incomplete',
+  pgsga: 'incomplete'
+};
+
+// 计算当前进度
+function updateProgress() {
+  const completed = Object.values(progress).filter(v => v === 'completed').length;
+  const percent = (completed / 3) * 100;
+  document.getElementById('progressBar').style.width = `${percent}%`;
+  document.getElementById('progressBar').textContent = `已完成 ${completed}/3`;
+}
+
+// 跳转当前需完成的问卷
+function startCurrentQuestionnaire() {
+  if (progress.dasi === 'incomplete') {
+    window.location.href = '/questionnaires/dasi';
+  } else if (progress.phq4 === 'incomplete') {
+    window.location.href = '/questionnaires/phq4';
+  } else if (progress.pgsga === 'incomplete') {
+    window.location.href = '/questionnaires/pgsga';
+  } else {
+    alert('所有问卷已完成，可提交');
+  }
+}
+
+updateProgress();
+</script>
