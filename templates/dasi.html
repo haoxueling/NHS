@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 引入 Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f7fa;
+      padding: 2rem 0;
+    }
+
+    /* 让问卷容器更宽，最大宽度调整为 1000px，可根据需求再改 */
+    .container {
+      max-width: 1000px;
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    .card {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    /* 自定义卡片头部样式 */
+    .custom-card-header {
+      background-color: #49b8ab; /* 浅灰色背景 */
+      /* 可选：添加其他样式，如边框、内边距等 */
+      border-bottom: 1px solid #ddd;
+      padding: 1.25rem;
+    }
+
+    /* 问题项容器， flex 布局让问题描述和按钮组水平排列 */
+    .question-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 1rem 0;
+    }
+
+    /* 按钮组容器：固定宽度 + flex，让每行按钮宽度一致 */
+     .btn-group-custom {
+      display: flex;
+      width: 220px; /* 固定总宽度，确保每行按钮组一样宽 */
+    }
+     .btn-option {
+      flex: 1; /* 每个按钮容器各占50% */
+    }
+
+    /* 隐藏原生单选框 */
+    .btn-option input[type="radio"] {
+      display: none;
+    }
+
+    /* 按钮样式：平分宽度 + 统一圆角 */
+    .btn-option label {
+      width: 100%; /* 按钮占满父容器（即50%宽度） */
+      text-align: center;
+      padding: 0.5rem 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #ccc;
+      margin: 0; /* 去除默认margin */
+    }
+
+    /* No 按钮默认样式 */
+    .btn-no {
+      background-color: #eee;
+      color: #666;
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .btn-no:hover {
+      background-color: #ddd;
+    }
+
+    /* Yes 按钮默认样式 */
+    .btn-yes {
+      background-color: #e9ecef;
+      color: #333;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .btn-yes:hover {
+      background-color: #d3d9df;
+    }
+
+    /* 选中状态样式 */
+    .btn-option input[type="radio"]:checked + label.btn-no {
+      background-color: #dc3545;
+      color: #000;
+    }
+
+    .btn-option input[type="radio"]:checked + label.btn-yes {
+      background-color: #3bd1cb;
+      color: #000;
+    }
+
+    /* 计分区域灰框样式（核心调整） */
+    .info-section {
+      margin-top: 1.5rem;
+    }
+    .gray-box {
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+    }
+    .gray-box h5 {
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      color: #333;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+    .gray-box p {
+      margin: 0.5rem 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .gray-box ul {
+      margin: 0.5rem 0 0.5rem 1.5rem;
+      padding: 0;
+    }
+    .gray-box li {
+      margin-bottom: 0.3rem;
+      font-size: 14px;
+    }
+
+    .score-value {
+      font-weight: bold;
+      color: #2eaee2;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header custom-card-header">
+        <h2>Duke Activity Status Index (DASI)</h2>
+        <p class="text-muted">Please answer the following questions based on your actual situation（1/3）</p>
+        <p class="text-muted" style="font-size: 16px; font-weight: bold;">Are you able to:</p>
+      </div>
+      <div class="card-body">
+        <form id="dasiForm">
+          <!-- 问题1 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Take care of self<br>e.g. eating, dressing, bathing, using the toilet</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q1-no" name="q1" value="0" required />
+                <label for="q1-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q1-yes" name="q1" value="2.75" />
+                <label for="q1-yes" class="btn-yes">Yes +2.75</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题2 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Walk indoors</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q2-no" name="q2" value="0" required />
+                <label for="q2-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q2-yes" name="q2" value="1.75" />
+                <label for="q2-yes" class="btn-yes">Yes +1.75</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题3 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Walk 1–2 blocks on level ground</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q3-no" name="q3" value="0" required />
+                <label for="q3-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q3-yes" name="q3" value="2.75" />
+                <label for="q3-yes" class="btn-yes">Yes +2.75</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题4 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Climb a flight of stairs or walk up a hill</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q4-no" name="q4" value="0" required />
+                <label for="q4-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q4-yes" name="q4" value="5.5" />
+                <label for="q4-yes" class="btn-yes">Yes +5.5</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题5 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Run a short distance</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q5-no" name="q5" value="0" required />
+                <label for="q5-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q5-yes" name="q5" value="8" />
+                <label for="q5-yes" class="btn-yes">Yes +8</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题6 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do light work around the house<br>e.g. dusting, washing dishes</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q6-no" name="q6" value="0" required />
+                <label for="q6-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q6-yes" name="q6" value="2.7" />
+                <label for="q6-yes" class="btn-yes">Yes +2.7</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题7 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do moderate work around the house<br>e.g. vacuuming, sweeping floors, carrying in</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q7-no" name="q7" value="0" required />
+                <label for="q7-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q7-yes" name="q7" value="3.5" />
+                <label for="q7-yes" class="btn-yes">Yes +3.5</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题8 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do heavy work around the house<br>e.g. scrubbing floors, lifting or moving heavy furniture</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q8-no" name="q8" value="0" required />
+                <label for="q8-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q8-yes" name="q8" value="8" />
+                <label for="q8-yes" class="btn-yes">Yes +8</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题9 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do yardwork<br>e.g. raking leaves, weeding, pushing a power mower</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q9-no" name="q9" value="0" required />
+                <label for="q9-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q9-yes" name="q9" value="4.5" />
+                <label for="q9-yes" class="btn-yes">Yes +4.5</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题10 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Have sexual relations</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q10-no" name="q10" value="0" required />
+                <label for="q10-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q10-yes" name="q10" value="5.25" />
+                <label for="q10-yes" class="btn-yes">Yes +5.25</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题11 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Participate in moderate recreational activities<br>e.g. golf, bowling, dancing, doubles tennis, throwing a baseball or football</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q11-no" name="q11" value="0" required />
+                <label for="q11-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q11-yes" name="q11" value="6" />
+                <label for="q11-yes" class="btn-yes">Yes +6</label>
+              </div>
+            </div>
+          </div>
+          <!-- 问题12 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Participate in strenuous sports<br>e.g. swimming, singles tennis, football, basketball, skiing</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q12-no" name="q12" value="0" required />
+                <label for="q12-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q12-yes" name="q12" value="7.5" />
+                <label for="q12-yes" class="btn-yes">Yes +7.5</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 计分区域（改为多个灰框，保持文字和结构一致） -->
+          <div class="info-section">
+            <!-- 第一个灰框：计分结果 -->
+            <div class="gray-box">
+              <h5>Scoring Results</h5>
+              <div class="row">
+                <div class="col-12">
+                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="metsScore">0</span> METs</p>
+                </div>
+                <div class="col-12">
+                  <p style="font-size: 13px;">The sum of yes(DASI) is: <span class="score-value" id="dasiScore">0</span> / 58.2 分</p>
+                </div>
+
+              </div>
+              <p>The higher the score (maximum 58.2), the higher the functional status.</p>
+            </div>
+
+            <!-- 第二个灰框：Facts & Figures -->
+            <div class="gray-box">
+              <h5>Facts & Figures</h5>
+              <p style="font-size: 16px;">Interpretation:</p>
+              <p>VO2 peak (mL/kg) = 0.43 x DASI + 9.6</p>
+              <p>METs (metabolic equivalents) = VO2 peak / 3.5</p>
+              <p>VO2 peak is maximal oxygen consumption (gold standard measurement is by exercise stress testing).</p>
+            </div>
+
+            <!-- 第三个灰框：ADVICE -->
+            <div class="gray-box">
+              <h5>ADVICE</h5>
+              <p>Scores are correlated with VO2 max and metabolic equivalents (METs), which are typically measured through cardiopulmonary exercise testing (CPET).</p>
+              <p>Higher scores indicate better functional capacity.</p>
+              <p>In preoperative assessments:</p>
+              <ul>
+                <li>DASI score ≥34 suggests a lower perioperative risk.</li>
+                <li>DASI score <34 is associated with an increased perioperative risk.</li>
+                <li>Functional capacity is an important part of preoperative cardiac risk assessment, but additional patient factors such as comorbidities, type of surgery, and symptoms should also be evaluated.</li>
+              </ul>
+              <table class="table table-sm table-bordered mt-2">
+                <thead>
+                  <tr>
+                    <th>METS</th>
+                    <th>LEVEL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>>7</td>
+                    <td>Universal</td>
+                  </tr>
+                  <tr>
+                    <td>4-7</td>
+                    <td>Targeted</td>
+                  </tr>
+                  <tr>
+                    <td><4</td>
+                    <td>Specialist</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 按钮区域 -->
+          <div class="d-flex justify-content-between mt-4">
+            <a href="user-dashboard.html" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-primary" id="nextBtn" disabled>Next Step</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入 jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 登录状态检查（保留原有功能）
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }else {
+      // 关键修改：登录成功后清除上一次的问卷数据，避免显示旧结果
+     localStorage.removeItem('dasi_answers');
+     localStorage.removeItem('phq4_answers');
+     localStorage.removeItem('questionnaire_progress');
+    }
+
+    // 页面加载时恢复已保存的数据
+    $(document).ready(function () {
+      loadSavedData(); // 新增：加载本地保存的内容
+      // 监听所有单选按钮变化（实时保存+计算分数）
+      $('input[type="radio"]').change(function () {
+        saveData(); // 新增：实时保存到本地
+        calculateScores(); // 保留：计算分数
+        checkAllAnswered(); // 保留：检查是否完成
+      });
+    });
+
+    // 从localStorage加载已保存的数据（新增功能）
+    function loadSavedData() {
+      const savedData = localStorage.getItem('dasi_answers');
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        // 恢复每个问题的选中状态
+        for (let i = 1; i <= 12; i++) {
+          if (data[`q${i}`]) {
+            $(`input[name="q${i}"][value="${data[`q${i}`]}"]`).prop('checked', true);
+          }
+        }
+        // 恢复分数显示
+        $('#dasiScore').text(data.dasi_total || '0');
+        $('#metsScore').text(data.mets_score || '0');
+        // 检查是否所有问题已回答
+        checkAllAnswered();
+      }
+    }
+
+    // 实时保存数据到localStorage（新增功能）
+    function saveData() {
+      const formData = {};
+      // 收集每个问题的答案
+      for (let i = 1; i <= 12; i++) {
+        formData[`q${i}`] = $(`input[name="q${i}"]:checked`).val() || '';
+      }
+      // 保存总分和METs分数
+      formData.dasi_total = $('#dasiScore').text();
+      formData.mets_score = $('#metsScore').text();
+      // 存入localStorage
+      localStorage.setItem('dasi_answers', JSON.stringify(formData));
+    }
+
+    // 计算DASI总分和METs分数（保留原有功能，基于NHS.pdf公式）
+    function calculateScores() {
+      let total = 0;
+      // 累加所有问题的分数
+      for (let i = 1; i <= 12; i++) {
+        const selectedValue = parseFloat($(`input[name="q${i}"]:checked`).val() || 0);
+        total += selectedValue;
+      }
+      // 保留一位小数
+      const dasiScore = total.toFixed(1);
+      // 根据NHS.pdf中的公式计算VO2峰值和METs
+      const vo2Peak = (0.43 * total + 9.6).toFixed(2);
+      const metsScore = (vo2Peak / 3.5).toFixed(2);
+
+      // 更新显示
+      $('#dasiScore').text(dasiScore);
+      $('#metsScore').text(metsScore);
+    }
+
+    // 检查是否所有问题都已回答（保留原有功能）
+    function checkAllAnswered() {
+      let allAnswered = true;
+      for (let i = 1; i <= 12; i++) {
+        if (!$(`input[name="q${i}"]:checked`).length) {
+          allAnswered = false;
+          break;
+        }
+      }
+      // 启用/禁用下一步按钮
+      $('#nextBtn').prop('disabled',!allAnswered);
+    }
+
+    // 表单提交处理（修改为提交到数据库，基于新的METS等级）
+    $('#dasiForm').submit(function (e) {
+      e.preventDefault();
+
+      // 收集表单数据（与NHS.pdf中的DASI结构一致）
+      const formData = {
+        type: 'dasi',
+        answers: JSON.parse(localStorage.getItem('dasi_answers')),
+        score: parseFloat($('#metsScore').text()),  // DASI分数
+        level: getDasiLevelByMets()  // DASI等级
+      };
+
+      // 发送到后端接口保存到数据库
+      $.ajax({
+        url: '/user/questionnaires', // 与user.py中的提交接口匹配
+        type: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // 身份验证
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        data: JSON.stringify(formData),
+        success: function () {
+          // 更新进度并跳转
+          localStorage.setItem('questionnaire_progress', JSON.stringify({
+            dasi: 'completed',
+            phq4: 'pending',
+            pgsga: 'pending'
+          }));
+          window.location.href = '/user/questionnaires/phq4';
+        },
+        error: function (xhr) {
+      // 打印完整错误信息（状态码、响应内容）
+          console.error('提交失败状态码:', xhr.status);
+          console.error('提交失败响应内容:', xhr.responseJSON || xhr.responseText);
+          alert(`提交失败（状态码: ${xhr.status}）：${xhr.responseJSON?.msg || '未知错误'}`);
+        }
+      });
+    });
+
+    // 根据新的METS区间判定等级（对应截图中的逻辑）
+    function getDasiLevelByMets() {
+      const mets = parseFloat($('#metsScore').text());
+      if (mets > 7) {
+        return 'Universal';
+      } else if (mets >= 4 && mets <= 7) {
+        return 'Targeted';
+      } else { // < 4
+        return 'Specialist';
+      }
+    }
+  </script>
+</body>
+</html>
