@@ -1,5 +1,5 @@
 """用户注册登录接口"""
-
+#print("auth.py 模块开始加载", flush=True)
 from flask import Blueprint, request, jsonify, render_template, redirect, make_response
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
