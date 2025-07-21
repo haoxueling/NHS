@@ -74,36 +74,31 @@ def login():
     if request.method == 'OPTIONS':
         return jsonify(), 200
 
-    data = request.json
-    if not data:
-        return jsonify(msg='请求数据为空'), 400
-
-    if not data.get('medical_id') or not data.get('password'):
-        return jsonify(msg='请提供医疗账号和密码'), 400
-
-    user = User.query.filter_by(medical_id=data['medical_id']).first()
-    if not user or not user.check_password(data['password']):  # 确保User模型实现了check_password方法
-        return jsonify(msg='医疗账号或密码错误'), 401
-
-    # 生成令牌
-    access_token = create_access_token(
-        identity=str(user.id),  # 将 user.id 转换为字符串
-        additional_claims={'role': user.role},
-        expires_delta=timedelta(hours=24)
-    )
-
-    # 构建响应，添加允许Cookie的头信息
-    resp = make_response(jsonify(
-        access_token=access_token,
-        user={
-            'id': user.id,
-            'name': user.name,
-            'role': user.role,
-            'medical_id': user.medical_id
-        }
-    ))
-    resp.headers['Access-Control-Allow-Credentials'] = 'true'  # 允许前端接收Cookie
-    return resp
+    try:  # 新增异常捕获
+        data = request.json
+        if not data:
+            return jsonify(msg='请求数据为空'), 400
+        if not data.get('medical_id') or not data.get('password'):
+            return jsonify(msg='请提供医疗账号和密码'), 400
+        # 数据库查询（可能出错的步骤）
+        user = User.query.filter_by(medical_id=data['medical_id']).first()
+        if not user or not user.check_password(data['password']):
+            return jsonify(msg='医疗账号或密码错误'), 401
+        # 生成令牌
+        access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={'role': user.role},
+            expires_delta=timedelta(hours=24)
+        )
+        resp = make_response(jsonify(
+            access_token=access_token,
+            user={'id': user.id, 'name': user.name, 'role': user.role, 'medical_id': user.medical_id}
+        ))
+        resp.headers['Access-Control-Allow-Credentials'] = 'true'
+        return resp
+    except Exception as e:  # 捕获所有异常并打印
+        print(f"登录接口异常：{str(e)}")
+        return jsonify(msg=f"服务器内部错误：{str(e)}"), 500
 
 # 根路径重定向到登录页
 @bp.route('/')
