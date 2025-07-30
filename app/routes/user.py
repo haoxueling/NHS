@@ -1,18 +1,15 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from functools import wraps
-
-
+from datetime import datetime
 
 from app import db
 from app.models import Questionnaire, User
-
 
 # 用户蓝图（路由前缀 /user）
 bp = Blueprint('user', __name__, url_prefix='/user')
 
 
-# 登录验证装饰器（未登录则跳转登录页）
 # 登录验证装饰器（未登录则跳转登录页）
 def login_required(view):
     @wraps(view)
@@ -33,33 +30,17 @@ def login_required(view):
     return wrapped_view
 
 
-# 用户仪表盘（/user）
+# 用户仪表盘（/user），移除进度条计算逻辑
 @bp.route('/')
 @login_required
 def dashboard():
     user_id = request.cookies.get('user_id')
     if not user_id:
         return redirect(url_for('auth.login_page'))
-    # 查询用户已完成的问卷
-    completed_types = set()
-    records = Questionnaire.query.filter_by(user_id=user_id).all()
-    for record in records:
-        completed_types.add(record.type)
-
-    total = 3
-    completed_count = len(completed_types)
-    progress = int((completed_count / total) * 100)
-
+    # 直接渲染页面，不计算进度相关（后续若需展示可根据实际有数据的分问卷字段判断）
     return render_template(
         'user_dashboard.html',
-        username=User.query.get(user_id).name,  # 正确获取用户名
-        progress_percent=progress,
-        step1_completed='dasi' in completed_types,
-        step2_completed='phq4' in completed_types,
-        step3_completed='pgsga' in completed_types,
-        step1_available=True,
-        step2_available='dasi' in completed_types,
-        step3_available='phq4' in completed_types
+        username=User.query.get(user_id).name  # 获取用户名
     )
 
 
@@ -84,59 +65,57 @@ def pgsga_questionnaire():
     return render_template('pgsga.html')
 
 
-# 提交问卷接口（/user/questionnaires）
-@bp.route('/questionnaires', methods=['POST'])
+# 合并提交所有问卷接口（/user/questionnaires/submit-all）
+@bp.route('/questionnaires/submit-all', methods=['POST'])
 @jwt_required()
-def submit_questionnaire():
+def submit_all_questionnaires():
+    user_id = get_jwt_identity()
+    data = request.json
+
+    # 校验三份问卷是否齐全
+    required_questionnaires = ['dasi', 'phq4', 'pgsga']
+    if not all(q in data for q in required_questionnaires):
+        return jsonify(msg="please submit full DASI、PHQ4、PGSGA data"), 400
+
+    # 解析各问卷数据
+    dasi = data.get('dasi', {})
+    phq4 = data.get('phq4', {})
+    pgsga = data.get('pgsga', {})
+
+    # 构造单条记录（存三份问卷数据）
+    submission = Questionnaire(
+        user_id=user_id,
+        # DASI 数据
+        dasi_score=dasi.get('mets_score'),
+        dasi_level=dasi.get('level'),
+        dasi_answers=dasi.get('answers'),
+        # PHQ4 数据
+        phq4_score=phq4.get('phq4_total'),
+        phq4_level=phq4.get('level'),
+        phq4_answers=phq4.get('answers'),
+        # PGSGA 数据
+        pgsga_score=pgsga.get('pgsga_total'),
+        pgsga_level=pgsga.get('level'),
+        pgsga_answers=pgsga.get('answers'),
+        # 整体状态
+        status='completed',
+        submitted_at=datetime.utcnow()
+    )
+
+    # 保存到数据库
     try:
-        user_id = int(get_jwt_identity())  # 将获取的用户 ID 转换为整数类型
-        data = request.json
-
-        # 2. 验证必要参数
-        valid_types = {'dasi', 'phq4', 'pgsga'}
-        required = ['type', 'answers', 'score', 'level']
-        if not all(k in data for k in required) or data['type'] not in valid_types:
-            return jsonify(msg="无效参数：需包含type、answers、score、level"), 400
-
-        # 3. 验证数据类型
-        try:
-            float(data['score'])  # 确保分数为数字
-            assert isinstance(data['level'], str)  # 等级为字符串
-        except (ValueError, AssertionError) as e:
-            print(f"数据类型验证失败: {e}")
-            return jsonify(msg="数据类型错误：score需为数字，level需为字符串"), 400
-
-        # 4. 保存问卷记录（独立存储每个问卷的分数和等级）
-        try:
-            new_record = Questionnaire(
-                user_id=user_id,
-                type=data['type'],
-                score=float(data['score']),
-                level=data['level'],
-                answers=data['answers']  # 保存完整答案（含详情）
-            )
-            db.session.add(new_record)
-            db.session.commit()
-
-            return jsonify({
-                'msg': f"{data['type']}提交成功",
-                'data': {
-                    'type': data['type'],
-                    'score': float(data['score']),
-                    'level': data['level'],
-                    'submitted_at': new_record.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
-                }
-            }), 201
-        except Exception as e:
-            print(f"保存问卷记录失败: {e}")
-            db.session.rollback()
-            return jsonify(msg=f"提交失败：{str(e)}"), 500
+        db.session.add(submission)
+        db.session.commit()
+        return jsonify(
+            msg="三份问卷已提交（单条记录）",
+            submission_id=submission.id
+        ), 201
     except Exception as e:
-        print(f"处理请求时发生未知错误: {e}")
-        return jsonify(msg=f"未知错误：{str(e)}"), 500
+        db.session.rollback()
+        return jsonify(msg=f"submit failed：{str(e)}"), 500
 
 
-# 医生查看所有用户问卷详情（权限控制）
+# 医生查看所有用户问卷详情（权限控制），修正返回字段
 @bp.route('/questionnaires/<int:q_id>')
 @jwt_required()
 def get_questionnaire_detail(q_id):
@@ -149,20 +128,26 @@ def get_questionnaire_detail(q_id):
     else:
         record = Questionnaire.query.filter_by(id=q_id, user_id=current_user_id).first_or_404()
 
-    # 返回完整详情（含答案、分数、等级）
+    # 返回完整详情（按实际模型字段，分问卷返回 ）
     return jsonify({
         'id': record.id,
         'user_id': record.user_id,
         'username': User.query.get(record.user_id).name,
-        'type': record.type,
-        'score': float(record.score),
-        'level': record.level,
-        'answers': record.answers,  # 完整答案详情
+        # 分问卷数据，原来错误用了不存在的type等字段，现在按实际模型返回
+        'dasi_score': record.dasi_score,
+        'dasi_level': record.dasi_level,
+        'dasi_answers': record.dasi_answers,
+        'phq4_score': record.phq4_score,
+        'phq4_level': record.phq4_level,
+        'phq4_answers': record.phq4_answers,
+        'pgsga_score': record.pgsga_score,
+        'pgsga_level': record.pgsga_level,
+        'pgsga_answers': record.pgsga_answers,
         'submitted_at': record.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
     }), 200
 
 
-# 获取当前用户的所有问卷记录（含各自分数和等级）
+# 获取当前用户的所有问卷记录（含各自分数和等级），修正返回字段
 @bp.route('/questionnaires', methods=['GET'])
 @jwt_required()
 def get_user_questionnaires():
@@ -173,9 +158,15 @@ def get_user_questionnaires():
     for record in records:
         result.append({
             'id': record.id,
-            'type': record.type,
-            'score': float(record.score),
-            'level': record.level,
+            # 原来错误用了不存在的type字段，可根据实际需求决定是否保留、怎么标识问卷类型
+            # 这里先去掉错误的type，若需区分，可结合业务逻辑判断（比如根据哪个分问卷有值 ）
+            # 'type': record.type,
+            'dasi_score': record.dasi_score,
+            'dasi_level': record.dasi_level,
+            'phq4_score': record.phq4_score,
+            'phq4_level': record.phq4_level,
+            'pgsga_score': record.pgsga_score,
+            'pgsga_level': record.pgsga_level,
             'submitted_at': record.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
         })
     return jsonify(result), 200

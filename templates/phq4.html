@@ -27,18 +27,18 @@
       border-bottom: 1px solid #ddd;
     }
 
-    /* 问题项容器：改为水平布局，问题文本左对齐，按钮组右对齐 */
+    /* 问题项容器：水平布局 */
    .question-item {
       display: flex;
-      align-items: flex-start; /* 顶部对齐 */
-      justify-content: space-between; /* 两端对齐 */
+      align-items: flex-start;
+      justify-content: space-between;
       border-bottom: 1px solid #eee;
       padding: 1.2rem 0;
     }
 
    .question-text {
-      flex: 1; /* 让问题文本占满左侧空间 */
-      margin-right: 2rem; /* 与按钮组保持间距 */
+      flex: 1;
+      margin-right: 2rem;
     }
 
    .question-text p {
@@ -46,16 +46,16 @@
       margin-bottom: 0;
     }
 
-    /* 按钮组容器：垂直堆叠，固定宽度确保长度相等 */
+    /* 按钮组：垂直堆叠 + 固定宽度 */
    .btn-group-custom {
       display: flex;
-      flex-direction: column; /* 垂直排列按钮 */
-      width: 220px; /* 固定宽度，与示例图匹配 */
-      gap: 0.3rem; /* 按钮之间的间距 */
+      flex-direction: column;
+      width: 220px;
+      gap: 0.3rem;
     }
 
    .btn-option {
-      width: 100%; /* 按钮占满容器宽度 */
+      width: 100%;
     }
 
    .btn-option input[type="radio"] {
@@ -64,31 +64,27 @@
 
    .btn-option label {
       width: 100%;
-      text-align: left; /* 文字左对齐，与示例图一致 */
-      padding: 0.5rem 1rem; /* 调整内边距，让按钮更舒展 */
+      text-align: left;
+      padding: 0.5rem 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
       border: 1px solid #ccc;
       margin: 0;
       font-size: 14px;
-      border-radius: 4px; /* 每个按钮独立圆角 */
+      border-radius: 4px;
       display: flex;
-      justify-content: space-between; /* 让选项文字和分数分别居左、居右 */
+      justify-content: space-between;
       align-items: center;
-    }
-
-    /* 按钮样式与示例图匹配 */
-   .btn-option label {
-      background-color: #fff; /* 白色背景 */
+      background-color: #fff;
       color: #333;
     }
 
    .btn-option label:hover {
-      background-color: #f8f9fa; /* hover 浅灰色 */
+      background-color: #f8f9fa;
     }
 
    .btn-option input[type="radio"]:checked + label {
-      background-color: #3bd1cb; /* 选中的亮蓝色，与示例图匹配 */
+      background-color: #3bd1cb;
       color: #000;
       border-color: #3bd1cb;
     }
@@ -153,7 +149,7 @@
   <div class="container">
     <div class="card">
       <div class="card-header">
-        <h2>Patient Health Questionnaire-4 (PHQ-4)</h2>
+        <h2>Psychological Wellbeing</h2>
         <p class="text-muted">Please answer the following questions based on your actual situation（2/3）</p>
         <p class="text-muted" style="font-size: 16px; font-weight: bold;">
           How often have you been bothered by the following over the past 2 weeks?
@@ -168,7 +164,7 @@
             </div>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="q1-0" name="q1" value="0" required />
+                <input type="radio" id="q1-0" name="q1" value="0" required checked/>
                 <label for="q1-0">Not at all <span>0</span></label>
               </div>
               <div class="btn-option">
@@ -193,7 +189,7 @@
             </div>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="q2-0" name="q2" value="0" required />
+                <input type="radio" id="q2-0" name="q2" value="0" required checked/>
                 <label for="q2-0">Not at all <span>0</span></label>
               </div>
               <div class="btn-option">
@@ -218,7 +214,7 @@
             </div>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="q3-0" name="q3" value="0" required />
+                <input type="radio" id="q3-0" name="q3" value="0" required checked/>
                 <label for="q3-0">Not at all <span>0</span></label>
               </div>
               <div class="btn-option">
@@ -243,7 +239,7 @@
             </div>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="q4-0" name="q4" value="0" required />
+                <input type="radio" id="q4-0" name="q4" value="0" required checked/>
                 <label for="q4-0">Not at all <span>0</span></label>
               </div>
               <div class="btn-option">
@@ -263,57 +259,47 @@
 
           <!-- 计分区域 -->
           <div class="info-section">
+            <!-- 1. 计分结果（含风险等级） -->
             <div class="gray-box">
               <h5>Scoring Results</h5>
-              <p style="font-size: 20px;">Your score is : <span class="score-value" id="phq4Score">0</span> points</p>
-              <p>Scores ≤5 suggest minimal depression which may not require treatment.</p>
+              <div class="row">
+                <!-- 新增：风险等级显示 -->
+                <div class="col-12 mt-2">
+                    <p style="font-size: 24px;">Your risk level is:
+                        <span id="riskLevel" class="text-success">Universal</span>
+                    </p>
+                </div>
+                <div class="col-12">
+                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="phq4Score">0</span> points</p>
+                </div>
+                <div class="col-12">
+                  <p>Scores ≤5 suggest minimal depression which may not require treatment.</p>
+                </div>
+              </div>
             </div>
 
+            <!-- 2. 公式说明（保留） -->
             <div class="gray-box">
               <h5>FORMULA</h5>
               <p>Addition of the selected points.</p>
             </div>
 
+            <!-- 3. ADVICE（合并原MANAGEMENT表格） -->
             <div class="gray-box">
               <h5>ADVICE</h5>
-              <p>Final diagnosis should be made with clinical interview and mental status examination including assessment of patient's level of distress and functional impairment.</p>
-            </div>
-
-            <div class="gray-box">
-              <h5>MANAGEMENT</h5>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Score</th>
-                    <th>Level</th>
-                    <th>Comments</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>0-5</td>
-                    <td>Universal</td>
-                    <td>Monitor; may not require treatment</td>
-                  </tr>
-                  <tr>
-                    <td>6-8</td>
-                    <td>Targeted</td>
-                    <td>Use clinical judgment (symptom duration, functional impairment) to determine necessity of treatment</td>
-                  </tr>
-                  <tr>
-                    <td>9-12</td>
-                    <td>Specialist</td>
-                    <td>Warrants active treatment with psychotherapy, medications, or combination</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div id="adviceContent">
+                <!-- 动态生成内容：红色提示 + 3个链接 + PHQ-4等级表 -->
+              </div>
             </div>
           </div>
 
-          <!-- 按钮区域 -->
-          <div class="d-flex justify-content-between action-buttons">
-            <a href="/user/questionnaires/dasi" class="btn btn-secondary">Back</a>
-            <button type="submit" class="btn btn-primary" id="nextBtn" disabled>Next Step</button>
+          <!-- 按钮区域：添加Exit按钮，保留Back按钮 -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>
+            <div>
+              <a href="/user/questionnaires/dasi" class="btn btn-secondary me-2">Back</a>
+              <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>
+            </div>
           </div>
         </form>
       </div>
@@ -323,55 +309,98 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-  // 登录状态检查
-    const token = localStorage.getItem('access_token');
+    // 登录状态检查
+    const token = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('access_token='))
+    ?.split('=')[1];
+
     if (!token) {
       window.location.href = 'login.html';
-    }else {
-     // 关键修改：登录成功后清除上一次的问卷数据，避免显示旧结果
-     localStorage.removeItem('dasi_answers');
-     localStorage.removeItem('phq4_answers');
-     localStorage.removeItem('questionnaire_progress');
     }
 
-    // 页面加载时恢复已保存数据
+    // 页面初始化：判断是否从其他问卷返回（是则保留数据，否则清除）
+    const isFromDasi = document.referrer.includes('dasi');
+    const isFromPgsga = document.referrer.includes('pgsga');
+    const isFromQuestionnaireFlow = isFromDasi || isFromPgsga;
+
+    // 非从问卷流程进入时，清除当前问卷数据
+    if (!isFromQuestionnaireFlow) {
+      localStorage.removeItem('phq4_answers');
+    }
+
+    // 页面加载初始化
     $(document).ready(function () {
-      loadSavedData();
+      // 从localStorage加载数据（如果是从其他问卷返回）
+      // 直接尝试加载本地存储（无论来源）
+    const savedData = localStorage.getItem('phq4_answers');
+    if (savedData) {
+        loadSavedData();
+    } else {
+        calculateScores();
+    }
+
+      // 监听单选按钮变化（实时保存+计算分数）
       $('input[type="radio"]').change(function () {
         saveData();
         calculateScores();
-        checkAllAnswered();
+      });
+
+      // 下一步按钮点击事件 - 保存数据并跳转
+      $('#nextBtn').click(function () {
+        saveData(); // 最后保存一次当前数据
+        window.location.href = '/user/questionnaires/pgsga';
+      });
+
+      // 返回按钮点击事件 - 保存数据并返回上一个问卷
+      $('#phq4Form').on('click', 'a[href="/user/questionnaires/dasi"]', function() {
+        saveData(); // 返回前保存当前数据
+      });
+
+      // 退出按钮点击事件 - 清除所有问卷数据并返回仪表盘
+      $('#exitBtn').click(function () {
+        // 清除所有相关问卷的临时数据
+        localStorage.removeItem('dasi_answers');
+        localStorage.removeItem('phq4_answers');
+        localStorage.removeItem('pgsga_answers');
+        // 跳转到用户仪表盘
+        window.location.href = '/user';
       });
     });
 
-    // 从本地存储加载数据
+    // 从localStorage加载已保存的数据
     function loadSavedData() {
       const savedData = localStorage.getItem('phq4_answers');
       if (savedData) {
         const data = JSON.parse(savedData);
-      // 恢复单选框状态
+        // 恢复单选框状态
         for (let i = 1; i <= 4; i++) {
-          if (data[`q${i}`]) {
-            $(`input[name="q${i}"][value="${data[`q${i}`]}"]`).prop('checked', true);
+          if (data.answers[`q${i}`]) {
+            $(`input[name="q${i}"][value="${data.answers[`q${i}`]}"]`).prop('checked', true);
           }
         }
         // 恢复分数显示
         $('#phq4Score').text(data.phq4_total || '0');
-        checkAllAnswered();
+        calculateScores(); // 恢复后重新计算等级和ADVICE
       }
     }
 
-    // 实时保存数据到本地存储
+    // 实时保存数据到localStorage（仅在未提交状态下）
     function saveData() {
-      const formData = {};
+      const answers = {};
       for (let i = 1; i <= 4; i++) {
-        formData[`q${i}`] = $(`input[name="q${i}"]:checked`).val() || '';
+        answers[`q${i}`] = $(`input[name="q${i}"]:checked`).val() || '';
       }
-      formData.phq4_total = $('#phq4Score').text();
+
+      const formData = {
+        answers: answers,
+        phq4_total: $('#phq4Score').text(),
+        level: getPhq4Level()
+      };
       localStorage.setItem('phq4_answers', JSON.stringify(formData));
     }
 
-    // 计算PHQ-4总分（所有选项分数相加）
+    // 计算PHQ-4总分 + 更新风险等级 + 渲染ADVICE
     function calculateScores() {
       let total = 0;
       for (let i = 1; i <= 4; i++) {
@@ -379,62 +408,82 @@
         total += selectedValue;
       }
       $('#phq4Score').text(total);
-    }
 
-    // 检查是否所有问题都已回答
-    function checkAllAnswered() {
-      let allAnswered = true;
-      for (let i = 1; i <= 4; i++) {
-        if (!$(`input[name="q${i}"]:checked`).length) {
-          allAnswered = false;
+      // 风险等级判定
+      const level = getPhq4Level();
+      const $riskLevel = $('#riskLevel');
+      $riskLevel.text(level);
+
+      // 等级颜色切换
+      switch(level) {
+        case 'Universal':
+          $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
           break;
-        }
+        case 'Targeted':
+          $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
+          break;
+        case 'Specialist':
+          $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
+          break;
       }
-      $('#nextBtn').prop('disabled', !allAnswered);
+
+      // 更新ADVICE内容
+      updateAdvice(level);
     }
 
-    // 表单提交处理（保存到数据库）
-    $('#phq4Form').submit(function (e) {
-      e.preventDefault();
-      const formData = {
-        type: 'phq4',
-        answers: JSON.parse(localStorage.getItem('phq4_answers')),
-        score: parseFloat($('#phq4Score').text()),  // PHQ4分数
-        level: getPhq4Level()  // PHQ4等级
-      };
+    // 构建ADVICE内容
+    function updateAdvice(level) {
+      // 3个通用链接
+      const linkContent = `
+        <p>1. Prehabilitation for Scotland: <a href="https://www.prehab.nhs.scot/" target="_blank" rel="noopener noreferrer">https://www.prehab.nhs.scot/</a></p>
+        <p>2. this is the link to the Prehabilitation information and workshop at Maggie's: <a href="https://www.maggies.org/what-we-offer/our-programmes/prehabilitation-getting-ready-for-treatment/" target="_blank" rel="noopener noreferrer">Prehabilitation – getting ready for treatment | Maggie's</a></p>
+        <p>3. Improving cancer journey - Macmillan One to One Team: <a href="https://www.macmillan.org.uk/information-and-support/help-through-cancer/macmillan-one-to-one-support/where-we-are/macmillan-one-to-one-airth.html" target="_blank" rel="noopener noreferrer">Macmillan One to One - Airth, Scotland - | Macmillan Cancer Support</a></p>
+      `;
 
-      // 提交到后端接口
-      $.ajax({
-        url: '/user/questionnaires',
-        type: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(formData),
-        success: function () {
-          localStorage.setItem('questionnaire_progress', JSON.stringify({
-            dasi: 'completed',
-            phq4: 'completed',
-            pgsga: 'pending'
-          }));
-          window.location.href = '/user/questionnaires/pgsga';
-        },
-        error: function (xhr) {
-        alert(`PHQ4提交失败：${xhr.responseJSON?.msg || xhr.statusText}`);
-        }
-      });
-    });
+      // PHQ-4专属等级表
+      const tableContent = `
+        <table class="table table-sm table-bordered mt-2">
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Level</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>0-5</td><td>Universal</td><td>Monitor; may not require treatment</td></tr>
+            <tr><td>6-8</td><td>Targeted</td><td>Use clinical judgment (symptom duration, functional impairment) to determine necessity of treatment</td></tr>
+            <tr><td>9-12</td><td>Specialist</td><td>Warrants active treatment with psychotherapy, medications, or combination</td></tr>
+          </tbody>
+        </table>
+      `;
 
-    // 按文档标准判定PHQ-4等级
+      const adviceParts = [];
+
+      // 非Universal等级添加红色提示
+      if (level !== 'Universal') {
+        adviceParts.push(`
+          <p style="font-size: 24px; font-weight: bold; color: red;">
+            You should consult a professional medical team for assistance.
+          </p>
+        `);
+      }
+
+      // 拼接内容
+      adviceParts.push(linkContent);
+      adviceParts.push(tableContent);
+
+      // 更新DOM
+      $('#adviceContent').html(adviceParts.join(''));
+    }
+
+    // PHQ-4等级判定规则
     function getPhq4Level() {
       const score = parseFloat($('#phq4Score').text());
       if (score <= 5) return 'Universal';
       if (score <= 8) return 'Targeted';
       return 'Specialist';
-
     }
   </script>
 </body>
-
 </html>
