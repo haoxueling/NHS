@@ -44,6 +44,15 @@
         </div>
 
         <form id="registerForm">
+             <!-- 角色选择 -->
+    <div class="mb-3">
+      <label for="roleSelect" class="form-label">Select Role</label>
+      <select id="roleSelect" class="form-select" required>
+        <option value="patient">Patient</option>
+        <option value="clinician">Clinician</option>
+      </select>
+    </div>
+
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="name" class="form-label">Full Name</label>
@@ -65,8 +74,15 @@
                     <label for="dateOfBirth" class="form-label">Date of Birth:</label>
                     <input type="date" class="form-control" id="dateOfBirth" required lang="en">
                 </div>
-                <div class="col-md-6">
-                    <label for="medicalId" class="form-label">Medical account</label>
+
+   <!-- Only for patient -->
+      <div class="col-md-6 d-none" id="chiLast4Group">
+        <label for="chiLast4" class="form-label">Last 4 digits of CHI</label>
+        <input type="text" class="form-control" id="chiLast4" maxlength="4">
+      </div>
+<!-- Only for clinician -->
+                <div class="col-md-6" id="medicalIdGroup>
+                    <label for="medicalId" class="form-label">Medical ID</label>
                     <input type="text" class="form-control" id="medicalId" required>
                 </div>
             </div>
@@ -90,13 +106,25 @@
 
             <button type="submit" class="btn btn-primary w-100">Register</button>
             <div class="mt-3 text-center">
-                <a href="/login">Do you already have an account? log on</a>
+                <a href="/login">Do you already have an account? log in</a>
             </div>
         </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script>
+          // 控制输入框显隐
+  $('#roleSelect').on('change', function () {
+    const role = $(this).val();
+    if (role === 'patient') {
+      $('#chiLast4Group').removeClass('d-none');
+      $('#medicalIdGroup').addClass('d-none');
+    } else {
+      $('#chiLast4Group').addClass('d-none');
+      $('#medicalIdGroup').removeClass('d-none');
+    }
+  }).trigger('change');
+
         // 注册表单提交
         $('#registerForm').submit(function(e) {
             e.preventDefault();
@@ -108,15 +136,45 @@
                 return;
             }
 
-            const userData = {
-                name: $('#name').val(),
-                gender: $('#gender').val(),
-                date_of_birth: $('#dateOfBirth').val(),
-                medical_id: $('#medicalId').val(),
-                email: $('#email').val(),
-                phone: $('#phone').val(),
-                password: password
-            };
+            const role = $('#roleSelect').val();
+    const name = $('#name').val();
+    const gender = $('#gender').val();
+    const dob = $('#dateOfBirth').val();
+    const email = $('#email').val();
+    const phone = $('#phone').val();
+
+     let data = {
+      name: name,
+      gender: gender,
+      date_of_birth: dob,
+      email: email,
+      phone: phone,
+      password: password,
+      role: role === 'patient' ? 'user' : 'doctor'  // 对应数据库字段
+    };
+if (role === 'patient') {
+      const last4 = $('#chiLast4').val();
+      if (!dob || !last4 || last4.length !== 4) {
+        alert('Please enter valid date of birth and last 4 CHI digits');
+        return;
+      }
+
+      const dobObj = new Date(dob);
+      const chiPrefix =
+        String(dobObj.getDate()).padStart(2, '0') +
+        String(dobObj.getMonth() + 1).padStart(2, '0') +
+        String(dobObj.getFullYear()).slice(-2);  // ddmmyy
+      data.chi_number = chiPrefix + last4;
+      data.medical_id = chiPrefix + last4;  // 用于登录时兼容 medical_id 字段
+    } else {
+      const medicalId = $('#medicalId').val();
+      if (!medicalId) {
+        alert('Please enter Medical ID');
+        return;
+      }
+      data.medical_id = medicalId;
+    }
+
 
             // 发送注册请求（路径与后端接口匹配）
             $.ajax({

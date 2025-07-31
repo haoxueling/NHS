@@ -11,6 +11,8 @@ class User(db.Model):
     gender = db.Column(db.Enum('male', 'female', 'other'), nullable=False)
     date_of_birth = db.Column(db.Date, nullable=False)
     medical_id = db.Column(db.String(50), unique=True, nullable=False)
+    # patient 新添chi_number 终端使用 Flask-Migrate 更新数据库：
+    chi_number = db.Column(db.String(10), unique=True, nullable=True)
     avatar = db.Column(db.String(255))
     email = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
@@ -35,14 +37,19 @@ class User(db.Model):
             self.password_hash.encode('utf-8')
         )
 
-
 # models.py
 class Questionnaire(db.Model):
     __tablename__ = 'questionnaire'
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # 关联用户
 
-
+    # type = db.Column(db.String(50), nullable=False)  # 问卷类型：dasi/phq4/pgsga
+    # score = db.Column(db.Float, nullable=False)  # 该问卷的分数
+    # level = db.Column(db.String(50), nullable=False)  # 该问卷的等级
+    # answers = db.Column(db.JSON, nullable=False)  # 完整问卷答案（含详情）
+    # submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # status = db.Column(db.String(20), default='completed')
 
     # DASI 问卷数据
     dasi_type = db.Column(db.String(50), default='dasi')
@@ -64,7 +71,6 @@ class Questionnaire(db.Model):
 
     # 提交时间与状态（整体状态）
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(20), default='completed')  # 一次提交即完成三份
-
+    
     def __repr__(self):
-        return f'<Questionnaire {self.id} 用户{self.user_id} 状态{self.status} 提交时间{self.submitted_at}>'
+        return f'<Questionnaire {self.id} {self.type} {self.score}分 {self.level}>'
