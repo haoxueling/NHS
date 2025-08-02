@@ -181,7 +181,7 @@ if (role === 'patient') {
                 url: '/api/register',  // 修正为后端注册接口路径
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(userData),
+                data: JSON.stringify(data),
                 success: function() {
                     alert('Registration successful, please log in');
                     window.location.href = '/login';

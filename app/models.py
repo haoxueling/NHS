@@ -49,7 +49,7 @@ class Questionnaire(db.Model):
     # level = db.Column(db.String(50), nullable=False)  # 该问卷的等级
     # answers = db.Column(db.JSON, nullable=False)  # 完整问卷答案（含详情）
     # submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
-    # status = db.Column(db.String(20), default='completed')
+    status = db.Column(db.String(20), default='completed')
 
     # DASI 问卷数据
     dasi_type = db.Column(db.String(50), default='dasi')
