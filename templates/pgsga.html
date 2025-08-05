@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f7fa;
+      padding: 2rem 0;
+    }
+
+   .container {
+      max-width: 1000px;
+      width: 90%;
+      margin: 0 auto;
+    }
+
+   .card {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+   .card-header {
+      background-color: #49b8ab;
+      padding: 1.25rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+   .question-section {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #eee;
+    }
+
+   .question-section h4 {
+      color: #333;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+   .question-text {
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* 按钮组样式：垂直排列、等宽、左对齐 */
+   .btn-group-custom {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+   .btn-option {
+      width: 100%;
+    }
+
+   .btn-option input[type="radio"],
+   .btn-option input[type="checkbox"] {
+      display: none;
+    }
+
+   .btn-option label {
+      width: 100%;
+      text-align: left;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #ccc;
+      margin: 0;
+      font-size: 14px;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #333;
+      display: block;
+    }
+
+   .btn-option label:hover {
+      background-color: #f8f9fa;
+    }
+
+   .btn-option input[type="radio"]:checked + label,
+   .btn-option input[type="checkbox"]:checked + label {
+      background-color: #3bd1cb;
+      color: #000;
+      border-color: #3bd1cb;
+    }
+
+    /* 计分区域样式 */
+   .info-section {
+      margin-top: 1.5rem;
+    }
+
+   .gray-box {
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+    }
+
+   .gray-box h5 {
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      color: #333;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+
+   .gray-box p {
+      margin: 0.5rem 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+   .gray-box table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+   .gray-box table th,
+   .gray-box table td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+   .gray-box table th {
+      background-color: #e9ecef;
+    }
+
+   .score-value {
+      font-weight: bold;
+      color: #2eaee2;
+    }
+
+   .action-buttons {
+      margin-top: 1.5rem;
+    }
+
+    /* 体重输入框样式 */
+   .weight-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+   .weight-inputs input {
+      width: 100px;
+      margin: 0 0.5rem;
+      padding: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    /* 不完整提示样式 */
+   .alert-message {
+      display: none;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Nutrition</h2>
+        <p class="text-muted">Please answer the following questions based on your actual situation（3/3）</p>
+      </div>
+      <div class="card-body">
+        <!-- 不完整提示 -->
+        <div class="alert-message" id="incompleteAlert">
+          <strong>注意：</strong> 您的问卷尚未完成，请返回完成以下部分：
+          <ul id="incompleteItems"></ul>
+        </div>
+
+        <form id="pgsgaForm">
+          <!-- 1. 体重相关问题 -->
+          <div class="question-section">
+            <h4>1. Weight</h4>
+            <p class="question-text">In summary of my current and recent weight:</p>
+            <div class="weight-inputs">
+              <div>
+                I currently weigh about <input type="number" id="current_weight" name="current_weight" required> kg
+              </div>
+              <div>
+                I am about <input type="number" id="height" name="height" required> cm tall
+              </div>
+            </div>
+            <div class="weight-inputs">
+              <div>
+                One month ago I weighed about <input type="number" id="weight_1month" name="weight_1month" required> kg
+              </div>
+              <div>
+                Six months ago I weighed about <input type="number" id="weight_6month" name="weight_6month" required> kg
+              </div>
+            </div>
+            <p class="question-text">During the past two weeks my weight has:</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="weight_change-1" name="weight_change" value="1" required />
+                <label for="weight_change-1">decreased <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="weight_change-0" name="weight_change" value="0" required checked/>
+                <label for="weight_change-0">not changed <span>0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="weight_change-2" name="weight_change" value="0" />
+                <label for="weight_change-2">increased <span>0</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 食物摄入问题 -->
+          <div class="question-section">
+            <h4>2. Food intake</h4>
+            <p class="question-text">As compared to my normal intake, I would rate my food intake during the past month as:</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="food_intake-0" name="food_intake" value="0" required checked/>
+                <label for="food_intake-0">unchanged <span>0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="food_intake-1" name="food_intake" value="0" />
+                <label for="food_intake-1">More than usual <span>0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="food_intake-2" name="food_intake" value="1" />
+                <label for="food_intake-2">less than usual <span>+1</span></label>
+              </div>
+            </div>
+
+            <p class="question-text">I am now taking:</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="food_type-0" name="food_type" value="1" required checked/>
+                <label for="food_type-0">normal food but less than normal amount <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="food_type-1" name="food_type" value="2" />
+                <label for="food_type-1">little solid food <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="food_type-2" name="food_type" value="3" />
+                <label for="food_type-2">only liquids <span>+3</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="food_type-3" name="food_type" value="3" />
+                <label for="food_type-3">only nutrition supplements <span>+3</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="food_type-4" name="food_type" value="4" />
+                <label for="food_type-4">very little of anything <span>+4</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="food_type-5" name="food_type" value="0" />
+                <label for="food_type-5">only tube feedings or only nutrition by vein <span>+0</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. 症状问题（多选） -->
+          <div class="question-section">
+            <h4>3. Symptoms</h4>
+            <p class="question-text">I have had the following problems that have kept me from eating enough during the past two weeks (check all that apply)</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-0" name="symptom" value="0" required checked/>
+                <label for="symptom-0">no problem eating <span>+0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-1" name="symptom" value="3" />
+                <label for="symptom-1">no appetite,just did not feel like eating <span>+3</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-2" name="symptom" value="1" />
+                <label for="symptom-2">nausea <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-3" name="symptom" value="3" />
+                <label for="symptom-3">vomiting <span>+3</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-4" name="symptom" value="1" />
+                <label for="symptom-4">constipation <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-5" name="symptom" value="3" />
+                <label for="symptom-5">diarrhea <span>+3</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-6" name="symptom" value="2" />
+                <label for="symptom-6">mouth sores <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-7" name="symptom" value="1" />
+                <label for="symptom-7">dry mouth <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-8" name="symptom" value="1" />
+                <label for="symptom-8">smells bother me <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-9" name="symptom" value="1" />
+                <label for="symptom-9">feel full quickly <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-10" name="symptom" value="2" />
+                <label for="symptom-10">problems swallowing <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-11" name="symptom" value="1" />
+                <label for="symptom-11">fatigue <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-12" name="symptom" value="3" />
+                <label for="symptom-12">pain;where? <span>+3</span></label>
+                <input type="text" id="pain_detail" class="form-control mt-1" placeholder="Please specify where the pain is" />
+              </div>
+              <div class="btn-option">
+                <input type="checkbox" id="symptom-13" name="symptom" value="1" />
+                <label for="symptom-13">other ** <span>+1</span></label>
+                <input type="text" id="other_detail" class="form-control mt-1" placeholder="Please specify other symptoms" />
+              </div>
+            </div>
+            <p class="question-text">**Examples: depression, money, or dental problems</p>
+          </div>
+
+          <!-- 4. 活动与功能问题 -->
+          <div class="question-section">
+            <h4>4. Activities and Function</h4>
+            <p class="question-text">Over the past month, I would generally rate my activity as:</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="activity-0" name="activity" value="0" required checked/>
+                <label for="activity-0">normal with no limitations <span>+0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="activity-1" name="activity" value="1" />
+                <label for="activity-1">not my normal self, but able to be up and about with fairly normal activities <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="activity-2" name="activity" value="2" />
+                <label for="activity-2">no feeling up to most things, but in bed or chair less than half the day <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="activity-3" name="activity" value="3" />
+                <label for="activity-3">able to do little activity and spend most of the day in bed or chair <span>+3</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="activity-4" name="activity" value="4" />
+                <label for="activity-4">pretty much bed ridden, rarely out of bed <span>+4</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 计分区域 -->
+          <div class="info-section">
+            <!-- 1. 计分结果（含风险等级） -->
+            <div class="gray-box">
+              <h5>Scoring Results</h5>
+              <div class="row">
+                <div class="col-12 mt-2">
+                    <p style="font-size: 24px;">Your risk level is:
+                        <span id="riskLevel" class="text-success">Universal</span>
+                    </p>
+                </div>
+                <div class="col-12">
+                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="pgsgaScore">0</span> points</p>
+                </div>
+                <div class="col-12">
+                  <p>Scores ≤1 suggest low risk which may not require treatment.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. 公式说明 -->
+            <div class="gray-box">
+              <h5>FORMULA</h5>
+              <p>Box 1 (weight history): additive</p>
+              <p>Box 2 (food intake): non-additive, use highest score</p>
+              <p>Box 3 (symptoms): additive</p>
+              <p>Box 4 (activities and function): non-additive, use highest score</p>
+              <p>Final score is additive score of boxes 1-4</p>
+            </div>
+
+            <!-- 3. ADVICE -->
+            <div class="gray-box">
+              <h5>ADVICE</h5>
+              <div id="adviceContent">
+                <!-- 动态生成内容 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 按钮区域：添加Exit按钮 -->
+          <div class="d-flex justify-content-between action-buttons">
+            <button type="button" class="btn btn-danger me-2" id="exitBtn">Exit</button>
+            <div>
+                <a href="/user/questionnaires/phq4" class="btn btn-secondary me-2">Back</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 登录状态检查
+  const token = document.cookie
+  .split('; ')
+  .find(row => row.startsWith('access_token='))
+  ?.split('=')[1];
+
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+
+  // 页面初始化：判断是否从PHQ4返回（是则保留数据，否则清除）
+  const isFromPhq4 = document.referrer.includes('phq4');
+  if (!isFromPhq4) {
+    // 非从PHQ4返回，清除旧数据（新开始或从仪表盘进入）
+    localStorage.removeItem('pgsga_answers');
+  }
+
+  // 页面初始化
+  $(document).ready(function () {
+    loadSavedData(); // 加载本地存储
+    calculateScores(); // 初始计算分数和等级
+    checkAllAnswered(); // 检查当前问卷完整性
+
+    // 监听所有输入变化
+    $('input[type="radio"], input[type="checkbox"], input[type="number"], input[type="text"]').change(function () {
+      saveData(); // 实时保存
+      calculateScores(); // 计算分数和等级
+      checkAllAnswered(); // 检查当前问卷完整性
+    });
+
+    // 返回按钮点击事件 - 保存数据并返回上一个问卷
+    $('#pgsgaForm').on('click', 'a[href="/user/questionnaires/phq4"]', function() {
+      saveData(); // 返回前保存当前数据
+    });
+
+    // 退出按钮点击事件 - 清除所有问卷数据并返回仪表盘
+    $('#exitBtn').click(function () {
+      // 清除所有相关问卷的临时数据
+      localStorage.removeItem('dasi_answers');
+      localStorage.removeItem('phq4_answers');
+      localStorage.removeItem('pgsga_answers');
+      // 跳转到用户仪表盘
+      window.location.href = '/user';
+    });
+
+    // 表单提交处理
+    $('#pgsgaForm').submit(function (e) {
+      e.preventDefault();
+
+      // 检查所有三份问卷完整性
+      if (checkAllQuestionnairesComplete()) {
+        // 所有问卷都已完成，提交数据
+        submitAllQuestionnaires();
+      } else {
+        // 显示不完整提示
+        $('#incompleteAlert').show();
+      }
+    });
+  });
+
+  // 从本地存储加载数据
+  function loadSavedData() {
+    const savedData = localStorage.getItem('pgsga_answers');
+    if (savedData) {
+      const data = JSON.parse(savedData);
+      // 恢复体重输入
+      $('#current_weight').val(data.current_weight || '');
+      $('#height').val(data.height || '');
+      $('#weight_1month').val(data.weight_1month || '');
+      $('#weight_6month').val(data.weight_6month || '');
+      // 恢复单选框
+      if (data.weight_change) $('input[name="weight_change"][value="' + data.weight_change + '"]').prop('checked', true);
+      if (data.food_intake) $('input[name="food_intake"][value="' + data.food_intake + '"]').prop('checked', true);
+      if (data.food_type) $('input[name="food_type"][value="' + data.food_type + '"]').prop('checked', true);
+      if (data.activity) $('input[name="activity"][value="' + data.activity + '"]').prop('checked', true);
+      // 恢复多选框
+      if (data.symptoms && data.symptoms.length) {
+        data.symptoms.forEach(val => {
+          $('input[name="symptom"][value="' + val + '"]').prop('checked', true);
+        });
+      }
+      // 恢复文本框
+      $('#pain_detail').val(data.pain_detail || '');
+      $('#other_detail').val(data.other_detail || '');
+      // 恢复分数
+      $('#pgsgaScore').text(data.pgsga_total || '0');
+    }
+  }
+
+  // 保存数据到本地存储
+  function saveData() {
+  const answers = {
+    // 显式收集关键问题答案（防止遗漏）
+    weight: {
+      current: $('#current_weight').val(),
+      height: $('#height').val(),
+      weight_1month: $('#weight_1month').val(),
+      weight_6month: $('#weight_6month').val(),
+      change: $('input[name="weight_change"]:checked').val()
+    },
+    food_intake: $('input[name="food_intake"]:checked').val(),
+    food_type: $('input[name="food_type"]:checked').val(),
+    activity: $('input[name="activity"]:checked').val(),
+    symptoms: $('input[name="symptom"]:checked').map(function() {
+      return $(this).val();
+    }).get(),
+    pain_detail: $('#pain_detail').val(),
+    other_detail: $('#other_detail').val()
+  };
+
+  // 强制计算分数和等级（防止为空）
+  const pgsgaTotal = parseFloat($('#pgsgaScore').text()) || 0;
+  const level = getPgsgaLevel() || 'Universal';
+
+  const formData = {
+    answers: answers,                  // 确保answers字段存在
+    pgsga_total: pgsgaTotal.toString(), // 确保pgsga_total字段存在（字符串类型兼容后端）
+    level: level,                      // 确保level字段存在
+    // 保留其他辅助字段（不影响提交，但便于本地恢复）
+    current_weight: $('#current_weight').val(),
+    height: $('#height').val(),
+    weight_1month: $('#weight_1month').val(),
+    weight_6month: $('#weight_6month').val(),
+    weight_change: $('input[name="weight_change"]:checked').val() || '',
+    food_intake: $('input[name="food_intake"]:checked').val() || '',
+    food_type: $('input[name="food_type"]:checked').val() || '',
+    activity: $('input[name="activity"]:checked').val() || '',
+    symptoms: $('input[name="symptom"]:checked').map(function() {
+      return $(this).val();
+    }).get()
+  };
+
+  localStorage.setItem('pgsga_answers', JSON.stringify(formData));
+}
+
+  // 计算PG-SGA总分
+  function calculateScores() {
+    let total = 0;
+
+    // 1. 体重变化分数
+    const weightChange = parseFloat($('input[name="weight_change"]:checked').val() || 0);
+    total += weightChange;
+
+    // 2. 食物摄入分数（取最高值）
+    const foodIntake = parseFloat($('input[name="food_intake"]:checked').val() || 0);
+    const foodType = parseFloat($('input[name="food_type"]:checked').val() || 0);
+    total += Math.max(foodIntake, foodType);
+
+    // 3. 症状分数（累加）
+    let symptomTotal = 0;
+    $('input[name="symptom"]:checked').each(function () {
+      symptomTotal += parseFloat($(this).val() || 0);
+    });
+    total += symptomTotal;
+
+    // 4. 活动功能分数
+    const activity = parseFloat($('input[name="activity"]:checked').val() || 0);
+    total += activity;
+
+    // 更新分数显示
+    $('#pgsgaScore').text(total);
+
+    // 更新风险等级和ADVICE
+    const level = getPgsgaLevel();
+    const $riskLevel = $('#riskLevel');
+    $riskLevel.text(level);
+
+    // 等级颜色切换
+    switch(level) {
+      case 'Universal':
+        $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
+        break;
+      case 'Targeted':
+        $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
+        break;
+      case 'Specialist':
+        $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
+        break;
+    }
+
+    // 渲染ADVICE内容
+    updateAdvice(level);
+  }
+
+  // 构建ADVICE内容
+  function updateAdvice(level) {
+    // 3个通用链接
+    const linkContent = `
+      <p>1. Prehabilitation for Scotland: <a href="https://www.prehab.nhs.scot/" target="_blank" rel="noopener noreferrer">https://www.prehab.nhs.scot/</a></p>
+      <p>2. this is the link to the Prehabilitation information and workshop at Maggie's: <a href="https://www.maggies.org/what-we-offer/our-programmes/prehabilitation-getting-ready-for-treatment/" target="_blank" rel="noopener noreferrer">Prehabilitation – getting ready for treatment | Maggie's</a></p>
+      <p>3. Improving cancer journey - Macmillan One to One Team: <a href="https://www.macmillan.org.uk/information-and-support/help-through-cancer/macmillan-one-to-one-support/where-we-are/macmillan-one-to-one-airth.html" target="_blank" rel="noopener noreferrer">Macmillan One to One - Airth, Scotland - | Macmillan Cancer Support</a></p>
+    `;
+
+    // PG-SGA专属等级表
+    const tableContent = `
+      <table class="table table-sm table-bordered mt-2">
+        <thead>
+          <tr>
+            <th>Score</th>
+            <th>Level</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>0-1</td><td>Universal</td><td>Monitor; may not require treatment</td></tr>
+          <tr><td>2-3</td><td>Targeted</td><td>Use clinical judgment to determine necessity of treatment</td></tr>
+          <tr><td>≥4</td><td>Specialist</td><td>Warrants active treatment with nutrition intervention or other therapies</td></tr>
+        </tbody>
+      </table>
+    `;
+
+    const adviceParts = [];
+
+    // 非Universal等级添加红色提示
+    if (level!== 'Universal') {
+      adviceParts.push(`
+        <p style="font-size: 24px; font-weight: bold; color: red;">
+          You should consult a professional medical team for assistance.
+        </p>
+      `);
+    }
+
+    // 拼接内容
+    adviceParts.push(linkContent);
+    adviceParts.push(tableContent);
+
+    // 更新DOM
+    $('#adviceContent').html(adviceParts.join(''));
+  }
+
+  // 检查当前PGSGA问卷所有必填项是否完成
+  function checkAllAnswered() {
+    // 检查体重输入框
+    const weightInputs = ['current_weight', 'height', 'weight_1month', 'weight_6month'];
+    let weightComplete = true;
+    weightInputs.forEach(id => {
+      if (!$('#' + id).val()) weightComplete = false;
+    });
+
+    // 检查单选框组
+    const radioGroups = ['weight_change', 'food_intake', 'food_type', 'activity'];
+    let radioComplete = true;
+    radioGroups.forEach(group => {
+      if (!$('input[name="' + group + '"]:checked').length) radioComplete = false;
+    });
+
+    // 检查症状多选至少选一个
+    const symptomComplete = $('input[name="symptom"]:checked').length > 0;
+
+    // 启用/禁用提交按钮
+    $('#submitBtn').prop('disabled',!(weightComplete && radioComplete && symptomComplete));
+  }
+
+  // 检查所有三份问卷是否完整
+  function checkAllQuestionnairesComplete() {
+    const incompleteItems = [];
+
+    // 检查DASI问卷
+    if (!isDasiComplete()) {
+      incompleteItems.push('DASI Questionnaire');
+    }
+
+    // 检查PHQ4问卷
+    if (!isPhq4Complete()) {
+      incompleteItems.push('PHQ-4 Questionnaire');
+    }
+
+    // 检查PGSGA问卷（当前问卷）
+    if (!isPgsgaComplete()) {
+      incompleteItems.push('PG-SGA Questionnaire');
+    }
+
+    // 更新不完整项目列表
+    const $incompleteList = $('#incompleteItems');
+    $incompleteList.empty();
+    incompleteItems.forEach(item => {
+      $incompleteList.append(`<li>${item}</li>`);
+    });
+
+    return incompleteItems.length === 0;
+  }
+
+  // 检查DASI问卷是否完整
+  function isDasiComplete() {
+    const dasiData = localStorage.getItem('dasi_answers');
+    if (!dasiData) return false;
+
+    const data = JSON.parse(dasiData);
+    // 检查12个问题是否都有答案
+    for (let i = 1; i <= 12; i++) {
+      if (!data.answers ||!data.answers[`q${i}`]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // 检查PHQ4问卷是否完整
+  function isPhq4Complete() {
+    const phq4Data = localStorage.getItem('phq4_answers');
+    if (!phq4Data) return false;
+
+    const data = JSON.parse(phq4Data);
+    // 检查4个问题是否都有答案
+    for (let i = 1; i <= 4; i++) {
+      if (!data.answers ||!data.answers[`q${i}`]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // 检查PGSGA问卷是否完整
+  function isPgsgaComplete() {
+    const pgsgaData = localStorage.getItem('pgsga_answers');
+    if (!pgsgaData) return false;
+
+    const data = JSON.parse(pgsgaData);
+
+    // 检查体重输入
+    if (!data.current_weight ||!data.height ||!data.weight_1month ||!data.weight_6month) {
+      return false;
+    }
+
+    // 检查单选问题
+    if (!data.weight_change ||!data.food_intake ||!data.food_type ||!data.activity) {
+      return false;
+    }
+
+    // 检查症状至少选择一项
+    if (!data.symptoms || data.symptoms.length === 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // 提交所有问卷数据到服务器
+  function submitAllQuestionnaires() {
+    // 读取三份问卷的本地存储
+    const dasiData = JSON.parse(localStorage.getItem('dasi_answers'));
+    const phq4Data = JSON.parse(localStorage.getItem('phq4_answers'));
+    const pgsgaData = JSON.parse(localStorage.getItem('pgsga_answers'));
+
+    // 构造合并后的提交数据
+    const allData = {
+        dasi: {
+            dasi_total: dasiData.dasi_total,
+            mets_score: dasiData.mets_score,
+            level: dasiData.level,
+            answers: dasiData.answers
+        },
+        phq4: {
+            phq4_total: phq4Data.phq4_total,
+            level: phq4Data.level,
+            answers: phq4Data.answers
+        },
+        pgsga: {
+            pgsga_total: pgsgaData.pgsga_total,
+            level: pgsgaData.level,
+            answers: pgsgaData.answers
+        }
+    };
+
+    // AJAX 提交（与后端接口对应）
+    $.ajax({
+        url: '/user/questionnaires/submit-all',
+        type: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(allData),
+        success: function (res) {
+            // 清理本地存储
+            ['dasi_answers', 'phq4_answers', 'pgsga_answers'].forEach(key => {
+                localStorage.removeItem(key);
+            });
+            localStorage.setItem('questionnaire_progress', JSON.stringify({
+                dasi: 'completed',
+                phq4: 'completed',
+                pgsga: 'completed'
+            }));
+            alert(`Submission successful!!`);
+            window.location.href = '/user';
+        },
+        error: function (xhr) {
+            console.error('Submission failed：', xhr.responseJSON || xhr.responseText);
+            alert(`Submission failed：${xhr.responseJSON?.msg || '服务器错误'}`);
+        }
+    });
+}
+
+  // PG-SGA等级判定
+  function getPgsgaLevel() {
+    const score = parseFloat($('#pgsgaScore').text());
+    if (score <= 1) return 'Universal';
+    if (score <= 3) return 'Targeted';
+    return 'Specialist';
+  }
+</script>
+</body>
+</html>

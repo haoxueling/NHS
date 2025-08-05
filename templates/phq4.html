@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f7fa;
+      padding: 2rem 0;
+    }
+
+   .container {
+      max-width: 1000px;
+      width: 90%;
+      margin: 0 auto;
+    }
+
+   .card {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+   .card-header {
+      background-color: #49b8ab;
+      padding: 1.25rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    /* 问题项容器：水平布局 */
+   .question-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 1.2rem 0;
+    }
+
+   .question-text {
+      flex: 1;
+      margin-right: 2rem;
+    }
+
+   .question-text p {
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+
+    /* 按钮组：垂直堆叠 + 固定宽度 */
+   .btn-group-custom {
+      display: flex;
+      flex-direction: column;
+      width: 220px;
+      gap: 0.3rem;
+    }
+
+   .btn-option {
+      width: 100%;
+    }
+
+   .btn-option input[type="radio"] {
+      display: none;
+    }
+
+   .btn-option label {
+      width: 100%;
+      text-align: left;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #ccc;
+      margin: 0;
+      font-size: 14px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      color: #333;
+    }
+
+   .btn-option label:hover {
+      background-color: #f8f9fa;
+    }
+
+   .btn-option input[type="radio"]:checked + label {
+      background-color: #3bd1cb;
+      color: #000;
+      border-color: #3bd1cb;
+    }
+
+    /* 计分区域样式 */
+   .info-section {
+      margin-top: 1.5rem;
+    }
+
+   .gray-box {
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+    }
+
+   .gray-box h5 {
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      color: #333;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+
+   .gray-box p {
+      margin: 0.5rem 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+   .gray-box table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+   .gray-box table th,
+   .gray-box table td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+   .gray-box table th {
+      background-color: #e9ecef;
+    }
+
+   .score-value {
+      font-weight: bold;
+      color: #2eaee2;
+    }
+
+   .action-buttons {
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Psychological Wellbeing</h2>
+        <p class="text-muted">Please answer the following questions based on your actual situation（2/3）</p>
+        <p class="text-muted" style="font-size: 16px; font-weight: bold;">
+          How often have you been bothered by the following over the past 2 weeks?
+        </p>
+      </div>
+      <div class="card-body">
+        <form id="phq4Form">
+          <!-- 问题1 -->
+          <div class="question-item">
+            <div class="question-text">
+              <p>1. Feeling nervous, anxious or on edge</p>
+            </div>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q1-0" name="q1" value="0" required checked/>
+                <label for="q1-0">Not at all <span>0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q1-1" name="q1" value="1" />
+                <label for="q1-1">Several days <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q1-2" name="q1" value="2" />
+                <label for="q1-2">More than half the days <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q1-3" name="q1" value="3" />
+                <label for="q1-3">Nearly every day <span>+3</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 问题2 -->
+          <div class="question-item">
+            <div class="question-text">
+              <p>2. Not being able to stop or control worrying</p>
+            </div>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q2-0" name="q2" value="0" required checked/>
+                <label for="q2-0">Not at all <span>0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q2-1" name="q2" value="1" />
+                <label for="q2-1">Several days <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q2-2" name="q2" value="2" />
+                <label for="q2-2">More than half the days <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q2-3" name="q2" value="3" />
+                <label for="q2-3">Nearly every day <span>+3</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 问题3 -->
+          <div class="question-item">
+            <div class="question-text">
+              <p>3. Feeling down, depressed or hopeless</p>
+            </div>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q3-0" name="q3" value="0" required checked/>
+                <label for="q3-0">Not at all <span>0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q3-1" name="q3" value="1" />
+                <label for="q3-1">Several days <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q3-2" name="q3" value="2" />
+                <label for="q3-2">More than half the days <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q3-3" name="q3" value="3" />
+                <label for="q3-3">Nearly every day <span>+3</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 问题4 -->
+          <div class="question-item">
+            <div class="question-text">
+              <p>4. Little interest or pleasure in doing things</p>
+            </div>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q4-0" name="q4" value="0" required checked/>
+                <label for="q4-0">Not at all <span>0</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q4-1" name="q4" value="1" />
+                <label for="q4-1">Several days <span>+1</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q4-2" name="q4" value="2" />
+                <label for="q4-2">More than half the days <span>+2</span></label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q4-3" name="q4" value="3" />
+                <label for="q4-3">Nearly every day <span>+3</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 计分区域 -->
+          <div class="info-section">
+            <!-- 1. 计分结果（含风险等级） -->
+            <div class="gray-box">
+              <h5>Scoring Results</h5>
+              <div class="row">
+                <!-- 新增：风险等级显示 -->
+                <div class="col-12 mt-2">
+                    <p style="font-size: 24px;">Your risk level is:
+                        <span id="riskLevel" class="text-success">Universal</span>
+                    </p>
+                </div>
+                <div class="col-12">
+                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="phq4Score">0</span> points</p>
+                </div>
+                <div class="col-12">
+                  <p>Scores ≤5 suggest minimal depression which may not require treatment.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. 公式说明（保留） -->
+            <div class="gray-box">
+              <h5>FORMULA</h5>
+              <p>Addition of the selected points.</p>
+            </div>
+
+            <!-- 3. ADVICE（合并原MANAGEMENT表格） -->
+            <div class="gray-box">
+              <h5>ADVICE</h5>
+              <div id="adviceContent">
+                <!-- 动态生成内容：红色提示 + 3个链接 + PHQ-4等级表 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 按钮区域：添加Exit按钮，保留Back按钮 -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>
+            <div>
+              <a href="/user/questionnaires/dasi" class="btn btn-secondary me-2">Back</a>
+              <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 登录状态检查
+    const token = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('access_token='))
+    ?.split('=')[1];
+
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    // 页面初始化：判断是否从其他问卷返回（是则保留数据，否则清除）
+    const isFromDasi = document.referrer.includes('dasi');
+    const isFromPgsga = document.referrer.includes('pgsga');
+    const isFromQuestionnaireFlow = isFromDasi || isFromPgsga;
+
+    // 非从问卷流程进入时，清除当前问卷数据
+    if (!isFromQuestionnaireFlow) {
+      localStorage.removeItem('phq4_answers');
+    }
+
+    // 页面加载初始化
+    $(document).ready(function () {
+      // 从localStorage加载数据（如果是从其他问卷返回）
+      // 直接尝试加载本地存储（无论来源）
+    const savedData = localStorage.getItem('phq4_answers');
+    if (savedData) {
+        loadSavedData();
+    } else {
+        calculateScores();
+    }
+
+      // 监听单选按钮变化（实时保存+计算分数）
+      $('input[type="radio"]').change(function () {
+        saveData();
+        calculateScores();
+      });
+
+      // 下一步按钮点击事件 - 保存数据并跳转
+      $('#nextBtn').click(function () {
+        saveData(); // 最后保存一次当前数据
+        window.location.href = '/user/questionnaires/pgsga';
+      });
+
+      // 返回按钮点击事件 - 保存数据并返回上一个问卷
+      $('#phq4Form').on('click', 'a[href="/user/questionnaires/dasi"]', function() {
+        saveData(); // 返回前保存当前数据
+      });
+
+      // 退出按钮点击事件 - 清除所有问卷数据并返回仪表盘
+      $('#exitBtn').click(function () {
+        // 清除所有相关问卷的临时数据
+        localStorage.removeItem('dasi_answers');
+        localStorage.removeItem('phq4_answers');
+        localStorage.removeItem('pgsga_answers');
+        // 跳转到用户仪表盘
+        window.location.href = '/user';
+      });
+    });
+
+    // 从localStorage加载已保存的数据
+    function loadSavedData() {
+      const savedData = localStorage.getItem('phq4_answers');
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        // 恢复单选框状态
+        for (let i = 1; i <= 4; i++) {
+          if (data.answers[`q${i}`]) {
+            $(`input[name="q${i}"][value="${data.answers[`q${i}`]}"]`).prop('checked', true);
+          }
+        }
+        // 恢复分数显示
+        $('#phq4Score').text(data.phq4_total || '0');
+        calculateScores(); // 恢复后重新计算等级和ADVICE
+      }
+    }
+
+    // 实时保存数据到localStorage（仅在未提交状态下）
+    function saveData() {
+      const answers = {};
+      for (let i = 1; i <= 4; i++) {
+        answers[`q${i}`] = $(`input[name="q${i}"]:checked`).val() || '';
+      }
+
+      const formData = {
+        answers: answers,
+        phq4_total: $('#phq4Score').text(),
+        level: getPhq4Level()
+      };
+      localStorage.setItem('phq4_answers', JSON.stringify(formData));
+    }
+
+    // 计算PHQ-4总分 + 更新风险等级 + 渲染ADVICE
+    function calculateScores() {
+      let total = 0;
+      for (let i = 1; i <= 4; i++) {
+        const selectedValue = parseFloat($(`input[name="q${i}"]:checked`).val() || 0);
+        total += selectedValue;
+      }
+      $('#phq4Score').text(total);
+
+      // 风险等级判定
+      const level = getPhq4Level();
+      const $riskLevel = $('#riskLevel');
+      $riskLevel.text(level);
+
+      // 等级颜色切换
+      switch(level) {
+        case 'Universal':
+          $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
+          break;
+        case 'Targeted':
+          $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
+          break;
+        case 'Specialist':
+          $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
+          break;
+      }
+
+      // 更新ADVICE内容
+      updateAdvice(level);
+    }
+
+    // 构建ADVICE内容
+    function updateAdvice(level) {
+      // 3个通用链接
+      const linkContent = `
+        <p>1. Prehabilitation for Scotland: <a href="https://www.prehab.nhs.scot/" target="_blank" rel="noopener noreferrer">https://www.prehab.nhs.scot/</a></p>
+        <p>2. this is the link to the Prehabilitation information and workshop at Maggie's: <a href="https://www.maggies.org/what-we-offer/our-programmes/prehabilitation-getting-ready-for-treatment/" target="_blank" rel="noopener noreferrer">Prehabilitation – getting ready for treatment | Maggie's</a></p>
+        <p>3. Improving cancer journey - Macmillan One to One Team: <a href="https://www.macmillan.org.uk/information-and-support/help-through-cancer/macmillan-one-to-one-support/where-we-are/macmillan-one-to-one-airth.html" target="_blank" rel="noopener noreferrer">Macmillan One to One - Airth, Scotland - | Macmillan Cancer Support</a></p>
+      `;
+
+      // PHQ-4专属等级表
+      const tableContent = `
+        <table class="table table-sm table-bordered mt-2">
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Level</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>0-5</td><td>Universal</td><td>Monitor; may not require treatment</td></tr>
+            <tr><td>6-8</td><td>Targeted</td><td>Use clinical judgment (symptom duration, functional impairment) to determine necessity of treatment</td></tr>
+            <tr><td>9-12</td><td>Specialist</td><td>Warrants active treatment with psychotherapy, medications, or combination</td></tr>
+          </tbody>
+        </table>
+      `;
+
+      const adviceParts = [];
+
+      // 非Universal等级添加红色提示
+      if (level !== 'Universal') {
+        adviceParts.push(`
+          <p style="font-size: 24px; font-weight: bold; color: red;">
+            You should consult a professional medical team for assistance.
+          </p>
+        `);
+      }
+
+      // 拼接内容
+      adviceParts.push(linkContent);
+      adviceParts.push(tableContent);
+
+      // 更新DOM
+      $('#adviceContent').html(adviceParts.join(''));
+    }
+
+    // PHQ-4等级判定规则
+    function getPhq4Level() {
+      const score = parseFloat($('#phq4Score').text());
+      if (score <= 5) return 'Universal';
+      if (score <= 8) return 'Targeted';
+      return 'Specialist';
+    }
+  </script>
+</body>
+</html>
