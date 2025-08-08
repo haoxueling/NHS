@@ -81,9 +81,9 @@
         <input type="text" class="form-control" id="chiLast4" maxlength="4">
       </div>
 <!-- Only for clinician -->
-                <div class="col-md-6" id="medicalIdGroup>
+                <div class="col-md-6 d-none" id="medicalIdGroup">
                     <label for="medicalId" class="form-label">Medical ID</label>
-                    <input type="text" class="form-control" id="medicalId" required>
+                    <input type="text" class="form-control" id="medicalId" >
                 </div>
             </div>
 
@@ -119,9 +119,11 @@
     if (role === 'patient') {
       $('#chiLast4Group').removeClass('d-none');
       $('#medicalIdGroup').addClass('d-none');
+      $('#medicalId').val(''); // 清空值，避免误提交
     } else {
       $('#chiLast4Group').addClass('d-none');
       $('#medicalIdGroup').removeClass('d-none');
+       $('#chiLast4').val('');
     }
   }).trigger('change');
 

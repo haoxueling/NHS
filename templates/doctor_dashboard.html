@@ -6,23 +6,23 @@
         <div class="col-md-3 bg-light py-4">
             <h4>Clinical Dashboard</h4>
 
-            <div class="mb-3">
-                <label for="riskLevel" class="form-label">Risk Level</label>
-                <select id="riskLevel" class="form-select">
-                    <option value="specialist" selected>Specialist</option>
-                    <option value="targeted">Targeted</option>
-                    <option value="universal">Universal</option>
-                </select>
-            </div>
+         <div class="mb-3">
+    <label for="tumorType" class="form-label">Tumor Type</label>
+    <select id="tumorType" class="form-select">
+        <option value="" disabled selected hidden>Please select a tumor type</option>
+        <option value="colorectal">Colorectal Team</option>
+        <option value="stoma">Stoma Care Team</option>
+        <option value="upper_gi">Upper GI Team</option>
+        <option value="haematology">Haematology Team</option>
+        <option value="lung">Lung Team</option>
+        <option value="breast">Breast Care Team</option>
+        <option value="skin">Skin Team</option>
+        <option value="head_neck">Head and Neck Team</option>
+        <option value="gynae">Gynaecology Team</option>
+        <option value="chemo">Chemotherapy Team</option>
+    </select>
+</div>
 
-            <div class="mb-3">
-                <label for="doctorType" class="form-label">Doctor Type</label>
-                <select id="doctorType" class="form-select">
-                    <option value="psychologist" selected>Psychologist</option>
-                    <option value="dietitian">Dietitian</option>
-                    <option value="physiologist">Physiologist</option>
-                </select>
-            </div>
 
             <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Search">
@@ -37,13 +37,23 @@
                 <table class="table table-bordered text-center align-middle">
                     <thead class="table-light">
                         <tr>
+                            <th>ID</th>
                             <th>Patient</th>
-                            <th>DASI Score</th>
-                            <th>DASI Level</th>
-                            <th>PG-SGA Score</th>
-                            <th>PG-SGA Level</th>
-                            <th>PHQ-4 Score</th>
-                            <th>PHQ-4 Level</th>
+{#                            <th>DASI Score</th>#}
+                            <th>Physical Activity Score </th>
+                            <th> Level</th>
+
+
+
+{#                            <th>PHQ-4 Score</th>#}
+                            <th>Psychological Wellbeing Score</th>
+                            <th>Level</th>
+
+                            {#                             <th>PG-SGA Score</th>#}
+                            <th>Nutrition Score</th>
+                            <th>Level</th>
+
+
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -51,14 +61,16 @@
                  {# 遍历数据库中 表 questionnaire #}
                     {% for p in patients %}
                         <tr>
+                            <td>{{ p.id }}</td>
                             <td>{{ p.user.name }}</td>
                             <td>{{ p.dasi_score }}</td>
                             <td>{{ p.dasi_level }}</td>
-                            <td>{{ p.pgsga_score }}</td>
-                            <td>{{ p.pgsga_level }}</td>
                             <td>{{ p.phq4_score }}</td>
                             <td>{{ p.phq4_level }}</td>
-                            <td><a href="#" class="btn btn-outline-primary btn-sm">View</a></td>
+                            <td>{{ p.pgsga_score }}</td>
+                            <td>{{ p.pgsga_level }}</td>
+                            <td><a class="btn btn-outline-primary btn-sm"
+                                    href="/doctor/question-info?id={{ p.id }}&name={{ p.user.name|urlencode }}" >View</a></td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -100,5 +112,33 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{#<script>#}
+{#         function postPatientData(questionId, patientName) {#}
+{#        fetch('/doctor/question-info', {#}
+{#            method: 'POST',#}
+{#            headers: {#}
+{#                'Content-Type': 'application/json',#}
+{#            },#}
+{#            body: JSON.stringify({#}
+{#                id: questionId,#}
+{#                name: patientName#}
+{#            })#}
+{#        })#}
+{#        .then(response => {#}
+{#            if (!response.ok) {#}
+{#                throw new Error('Network response was not ok');#}
+{#            }#}
+{#            return response.json(); // Flask 返回 JSON 响应#}
+{#        })#}
+{#        .then(data => {#}
+{#            console.log('Success:', data);#}
+{#            // 示例：跳转页面或展示响应数据#}
+{#            // window.location.href = `/patient-detail/${data.id}`;#}
+{#        })#}
+{#        .catch(error => {#}
+{#            console.error('Error:', error);#}
+{#        });#}
+{#    }#}
+{#</script>#}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
