@@ -297,7 +297,7 @@
           <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>
             <div>
-              <a href="/user/questionnaires/dasi" class="btn btn-secondary me-2">Back</a>
+              <a href="/user/questionnaires/dasi" class="btn btn-primary me-2">Back</a>
               <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>
             </div>
           </div>
@@ -417,14 +417,17 @@
       // 等级颜色切换
       switch(level) {
         case 'Universal':
-          $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
-          break;
+            $riskLevel.attr('title', 'You are at a good status');
+            $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
+            break;
         case 'Targeted':
-          $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
-          break;
+            $riskLevel.attr('title', 'You need medical assistance');
+            $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
+            break;
         case 'Specialist':
-          $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
-          break;
+            $riskLevel.attr('title', 'You need medical assistance');
+            $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
+            break;
       }
 
       // 更新ADVICE内容

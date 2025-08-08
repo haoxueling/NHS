@@ -1,48 +1,47 @@
 {% include 'navbar.html' %}
 
 <div class="container mt-4">
-    <h1 class="mb-3">Prehabilitation</h1>
+    <h1 class="mb-3">Prehabilitation Screening </h1>
     <p class="text-muted mb-4">Please complete the following questionnaire in order to comprehensively assess your health status</p>
 
-    <div class="row g-4">
-        <!-- DASI 问卷卡片 - 始终可用 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow">
+    <!-- 垂直排列的问卷卡片，步骤显示在卡片正上方 -->
+    <div class="d-flex flex-column gap-0">
+        <!-- Step 1 + 卡片 -->
+        <div class="mb-4"> <!-- 上下间距统一用 mb-4 和 mt-4 控制 -->
+            <span class="bg-success text-white fw-bold px-3 py-1 rounded-pill">Step 1</span>
+            <div class="card h-100 shadow mt-2"> <!-- mt-2 增加 Step 和卡片的间距 -->
                 <div class="card-body">
                     <h5 class="card-title">Physical Activity</h5>
                     <p class="card-text text-muted">Assess daily activity ability and functional status</p>
-                    <button class="btn btn-primary w-100"
-                            onclick="startQuestionnaire('dasi')">
+                    <button class="btn btn-primary w-100" onclick="startQuestionnaire('dasi')">
                         Start
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- PHQ-4 问卷卡片 - 永久禁用 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow">
+        <!-- Step 2 + 卡片 -->
+        <div class="mb-4">
+            <span class="bg-success text-white fw-bold px-3 py-1 rounded-pill">Step 2</span>
+            <div class="card h-100 shadow mt-2">
                 <div class="card-body">
                     <h5 class="card-title">Psychological Wellbeing</h5>
                     <p class="card-text text-muted">Assess recent emotional and anxiety states</p>
-                    <button class="btn btn-primary w-100"
-                            disabled
-                            onclick="startQuestionnaire('phq4')">
+                    <button class="btn btn-primary w-100" disabled onclick="startQuestionnaire('phq4')">
                         Start
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- PG-SGA 问卷卡片 - 永久禁用 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow">
+        <!-- Step 3 + 卡片 -->
+        <div class="mb-4">
+            <span class="bg-success text-white fw-bold px-3 py-1 rounded-pill">Step 3</span>
+            <div class="card h-100 shadow mt-2">
                 <div class="card-body">
                     <h5 class="card-title">Nutrition</h5>
                     <p class="card-text text-muted">Assess nutritional status and daily activity ability</p>
-                    <button class="btn btn-primary w-100"
-                            disabled
-                            onclick="startQuestionnaire('pgsga')">
+                    <button class="btn btn-primary w-100" disabled onclick="startQuestionnaire('pgsga')">
                         Start
                     </button>
                 </div>

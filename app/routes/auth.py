@@ -1,6 +1,6 @@
 """用户注册登录接口"""
 #print("auth.py 模块开始加载", flush=True)
-from flask import Blueprint, request, jsonify, render_template, redirect, make_response
+from flask import Blueprint, request, jsonify, render_template, redirect, make_response, Flask, session, url_for
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 from app import db
@@ -163,3 +163,13 @@ def login():
 @bp.route('/')
 def index():
     return redirect('/login')  # 修正重定向路径，匹配登录页面路由
+# 退出登录路由（清除Token并跳转登录页）
+@bp.route('/logout')
+def logout():
+    """用户退出登录：清除Token Cookie并重定向到登录页"""
+    # 创建响应对象，用于删除Cookie
+    resp = make_response(redirect(url_for('auth.login_page')))  # 重定向到登录页面
+    # 删除存储的access_token Cookie（与登录时设置的Cookie路径保持一致）
+    resp.delete_cookie('access_token', path='/')  # path='/'确保所有路径下的Cookie都被清除
+
+    return resp
