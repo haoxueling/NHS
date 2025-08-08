@@ -792,6 +792,7 @@
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
             'Content-Type': 'application/json'
         },
+
         data: JSON.stringify(allData),
         success: function (res) {
             // 清理本地存储
