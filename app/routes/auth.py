@@ -34,7 +34,8 @@ def register():
         return jsonify(msg='请求数据为空'), 400
 
     # 验证必要字段
-    required_fields = ['name', 'gender', 'date_of_birth', 'medical_id', 'email', 'phone', 'password']
+    # required_fields = ['name', 'gender', 'date_of_birth', 'medical_id', 'email', 'phone', 'password']
+    required_fields = ['name', 'gender', 'date_of_birth', 'email', 'phone', 'password',"role"]
     for field in required_fields:
         if field not in data or not data[field]:
             return jsonify(msg=f'缺少必要字段或字段值为空: {field}'), 400
@@ -43,6 +44,34 @@ def register():
     if User.query.filter_by(medical_id=data['medical_id']).first():
         return jsonify(msg='医疗账号已被注册'), 400
 
+    role = data['role']
+
+    if role == 'user':  # 患者注册
+        chi_number = data.get('chi_number')
+        if not chi_number:
+            return jsonify(msg='请提供 CHI Number'), 400
+
+        # 确保 CHI 号码唯一（包括兼容 medical_id 字段）
+        if User.query.filter(
+                (User.chi_number == chi_number) | (User.medical_id == chi_number)
+        ).first():
+            return jsonify(msg='该 CHI Number 已被注册'), 400
+
+        medical_id = chi_number  # 为了模型中 medical_id 非空约束，写入相同值
+
+    elif role == 'doctor':  # 临床人员注册
+        medical_id = data.get('medical_id')
+        if not medical_id:
+            return jsonify(msg='请提供 Medical ID'), 400
+
+        if User.query.filter_by(medical_id=medical_id).first():
+            return jsonify(msg='该 Medical ID 已被注册'), 400
+
+        chi_number = None  # 医生无 chi_number
+
+    else:
+        return jsonify(msg='无效的角色'), 400
+
 
     # 创建用户（捕获数据库异常）
     try:
@@ -50,10 +79,11 @@ def register():
             name=data['name'],
             gender=data['gender'],
             date_of_birth=data['date_of_birth'],
-            medical_id=data['medical_id'],
+            medical_id=medical_id,
+            chi_number=chi_number,
             email=data['email'],
             phone=data['phone'],
-            role='user'
+            role=role
         )
         user.set_password(data['password'])  # 确保User模型实现了set_password方法
         db.session.add(user)
@@ -80,12 +110,33 @@ def login():
         print(f"请求数据：{data}", flush=True)  # 打印前端传来的参数
         if not data:
             return jsonify(msg='请求数据为空'), 400
-        if not data.get('medical_id') or not data.get('password'):
-            return jsonify(msg='请提供医疗账号和密码'), 400
-        # 数据库查询（可能出错的步骤）
-        user = User.query.filter_by(medical_id=data['medical_id']).first()
-        if not user or not user.check_password(data['password']):
-            return jsonify(msg='医疗账号或密码错误'), 401
+
+        role = data.get('role')
+        password = data.get('password')
+
+        if not role or not password:
+            return jsonify(msg='缺少角色或密码'), 400
+
+        user = None
+
+        if role == 'patient':
+            chi_number = data.get('chi_number')
+            if not chi_number:
+                return jsonify(msg='缺少 CHI Number'), 400
+            user = User.query.filter_by(role='user', chi_number=chi_number).first()
+        # 数据库里面的role doctor 字段对应clinician ，user字段对应patient
+        elif role == 'clinician':
+            medical_id = data.get('medical_id')
+            if not medical_id:
+                return jsonify(msg='缺少 Medical ID'), 400
+            user = User.query.filter_by(role='doctor', medical_id=medical_id).first()
+
+        else:
+            return jsonify(msg='无效的角色'), 400
+
+        if not user or not user.check_password(password):
+            return jsonify(msg='账号或密码错误'), 401
+
         # 生成令牌
         access_token = create_access_token(
             identity=str(user.id),
@@ -94,7 +145,13 @@ def login():
         )
         resp = make_response(jsonify(
             access_token=access_token,
-            user={'id': user.id, 'name': user.name, 'role': user.role, 'medical_id': user.medical_id}
+            user={
+                 'id': user.id,
+                  'name': user.name,
+                  'role': user.role,
+                  'medical_id': user.medical_id,
+                 'chi_number': user.chi_number
+                  }
         ))
         resp.headers['Access-Control-Allow-Credentials'] = 'true'
         return resp

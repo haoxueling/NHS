@@ -1,10 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% include 'navbar.html' %}
 
-</body>
-</html>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-light py-4">
+            <h4>Clinical Dashboard</h4>
+
+         <div class="mb-3">
+    <label for="tumorType" class="form-label">Tumor Type</label>
+    <select id="tumorType" class="form-select">
+        <option value="" disabled selected hidden>Please select a tumor type</option>
+        <option value="colorectal">Colorectal Team</option>
+        <option value="stoma">Stoma Care Team</option>
+        <option value="upper_gi">Upper GI Team</option>
+        <option value="haematology">Haematology Team</option>
+        <option value="lung">Lung Team</option>
+        <option value="breast">Breast Care Team</option>
+        <option value="skin">Skin Team</option>
+        <option value="head_neck">Head and Neck Team</option>
+        <option value="gynae">Gynaecology Team</option>
+        <option value="chemo">Chemotherapy Team</option>
+    </select>
+</div>
+
+
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 py-4">
+            <h2 class="mb-4">Screening results</h2>
+
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient</th>
+{#                            <th>DASI Score</th>#}
+                            <th>Physical Activity Score </th>
+                            <th> Level</th>
+
+
+
+{#                            <th>PHQ-4 Score</th>#}
+                            <th>Psychological Wellbeing Score</th>
+                            <th>Level</th>
+
+                            {#                             <th>PG-SGA Score</th>#}
+                            <th>Nutrition Score</th>
+                            <th>Level</th>
+
+
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                 {# 遍历数据库中 表 questionnaire #}
+                    {% for p in patients %}
+                        <tr>
+                            <td>{{ p.id }}</td>
+                            <td>{{ p.user.name }}</td>
+                            <td>{{ p.dasi_score }}</td>
+                            <td>{{ p.dasi_level }}</td>
+                            <td>{{ p.phq4_score }}</td>
+                            <td>{{ p.phq4_level }}</td>
+                            <td>{{ p.pgsga_score }}</td>
+                            <td>{{ p.pgsga_level }}</td>
+                            <td><a class="btn btn-outline-primary btn-sm"
+                                    href="/doctor/question-info?id={{ p.id }}&name={{ p.user.name|urlencode }}" >View</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+{#                    <tbody>#}
+{#                        <tr>#}
+{#                            <td>John Doe</td>#}
+{#                            <td>16</td>#}
+{#                            <td>Targeted</td>#}
+{#                            <td>5</td>#}
+{#                            <td>Specialist</td>#}
+{#                            <td>9</td>#}
+{#                            <td>Specialist</td>#}
+{#                            <td><a href="#" class="btn btn-outline-primary btn-sm">View</a></td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>Jane Smith</td>#}
+{#                            <td>22</td>#}
+{#                            <td>Universal</td>#}
+{#                            <td>7</td>#}
+{#                            <td>Targeted</td>#}
+{#                            <td>3</td>#}
+{#                            <td>Targeted</td>#}
+{#                            <td><a href="#" class="btn btn-outline-primary btn-sm">View</a></td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>Mike Brown</td>#}
+{#                            <td>10</td>#}
+{#                            <td>Specialist</td>#}
+{#                            <td>13</td>#}
+{#                            <td>Specialist</td>#}
+{#                            <td>4</td>#}
+{#                            <td>Targeted</td>#}
+{#                            <td><a href="#" class="btn btn-outline-primary btn-sm">View</a></td>#}
+{#                        </tr>#}
+{#                    </tbody>#}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{#<script>#}
+{#         function postPatientData(questionId, patientName) {#}
+{#        fetch('/doctor/question-info', {#}
+{#            method: 'POST',#}
+{#            headers: {#}
+{#                'Content-Type': 'application/json',#}
+{#            },#}
+{#            body: JSON.stringify({#}
+{#                id: questionId,#}
+{#                name: patientName#}
+{#            })#}
+{#        })#}
+{#        .then(response => {#}
+{#            if (!response.ok) {#}
+{#                throw new Error('Network response was not ok');#}
+{#            }#}
+{#            return response.json(); // Flask 返回 JSON 响应#}
+{#        })#}
+{#        .then(data => {#}
+{#            console.log('Success:', data);#}
+{#            // 示例：跳转页面或展示响应数据#}
+{#            // window.location.href = `/patient-detail/${data.id}`;#}
+{#        })#}
+{#        .catch(error => {#}
+{#            console.error('Error:', error);#}
+{#        });#}
+{#    }#}
+{#</script>#}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>

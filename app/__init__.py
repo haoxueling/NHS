@@ -46,8 +46,10 @@ def create_app(config_class=Config):
     from app.routes.auth import bp as auth_bp
     from app.routes.user import bp as user_bp
     from app.routes.staff import bp as staff_bp
+    from app.routes.doctor_ui import bp as doctor_ui_bp
     app.register_blueprint(auth_bp, url_prefix='/')
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(staff_bp, url_prefix='/api/staff')
+    app.register_blueprint(doctor_ui_bp)
 
     return app
