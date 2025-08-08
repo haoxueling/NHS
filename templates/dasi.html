@@ -88,7 +88,7 @@
 
     /* 选中状态样式 */
     .btn-option input[type="radio"]:checked + label.btn-no {
-      background-color: #dc3545;
+      background-color: #49b881;
       color: #000;
     }
 
@@ -329,7 +329,9 @@
                     </p>
                 </div>
                 <div class="col-12">
-                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="metsScore">0</span> METs</p>
+                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="metsScore">0</span>
+                    <span title="metabolic equivalents">METs</span>
+                  </p>
                 </div>
                 <div class="col-12">
                   <p style="font-size: 13px;">The sum of yes(DASI) is: <span class="score-value" id="dasiScore">0</span> / 58.2 分</p>
@@ -480,17 +482,20 @@
 
       // 设置等级文本颜色
       switch(level) {
-          case 'Universal':
-          $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
-          break;
-          case 'Targeted':
-          $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
-          break;
-          case 'Specialist':
-          $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
-          break;
+        case 'Universal':
+            $riskLevel.attr('title', 'You are at a good status');
+            $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
+            break;
+        case 'Targeted':
+            $riskLevel.attr('title', 'You need medical assistance');
+            $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
+            break;
+        case 'Specialist':
+            $riskLevel.attr('title', 'You need medical assistance');
+            $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
+            break;
       }
-
+      // 更新ADVICE内容
       updateAdvice(level);
     }
 

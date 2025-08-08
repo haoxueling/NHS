@@ -157,6 +157,22 @@
       border-radius: 4px;
     }
 
+   #submitOverlay {
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     cursor: not-allowed; /* 禁用时显示禁止光标 */
+     z-index: 1; /* 确保在按钮上方 */
+     background: transparent; /* 完全透明 */
+   }
+
+   /* 按钮启用时，覆盖层不拦截点击 */
+   #submitBtn:not(:disabled) + #submitOverlay {
+     pointer-events: none; /* 启用时让覆盖层失效 */
+   }
+
     /* 不完整提示样式 */
    .alert-message {
       display: none;
@@ -408,8 +424,12 @@
           <div class="d-flex justify-content-between action-buttons">
             <button type="button" class="btn btn-danger me-2" id="exitBtn">Exit</button>
             <div>
-                <a href="/user/questionnaires/phq4" class="btn btn-secondary me-2">Back</a>
-                <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Submit</button>
+                <a href="/user/questionnaires/phq4" class="btn btn-primary me-2">Back</a>
+                <div style="position: relative; display: inline-block;">
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Submit</button>
+                    <!-- 透明覆盖层，用于监听禁用时的点击 -->
+                    <div id="submitOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: not-allowed;"></div>
+                </div>
             </div>
           </div>
         </form>
@@ -443,11 +463,20 @@
     calculateScores(); // 初始计算分数和等级
     checkAllAnswered(); // 检查当前问卷完整性
 
+
+
     // 监听所有输入变化
     $('input[type="radio"], input[type="checkbox"], input[type="number"], input[type="text"]').change(function () {
       saveData(); // 实时保存
       calculateScores(); // 计算分数和等级
       checkAllAnswered(); // 检查当前问卷完整性
+    });
+
+    // 初始化 Bootstrap Tooltip（如需悬浮提示）
+    $('#submitBtn').tooltip({
+        title: '',
+        trigger: 'hover',
+        placement: 'top'
     });
 
     // 返回按钮点击事件 - 保存数据并返回上一个问卷
@@ -464,6 +493,14 @@
       // 跳转到用户仪表盘
       window.location.href = '/user';
     });
+    // 监听覆盖层的点击（核心）
+    $('#submitOverlay').on('click', function () {
+      const isDisabled = $('#submitBtn').prop('disabled');
+      console.log('按钮状态：', isDisabled);
+      if (isDisabled) {
+        alert('You have not completed all the questions');
+      }
+    });
 
     // 表单提交处理
     $('#pgsgaForm').submit(function (e) {
@@ -478,6 +515,7 @@
         $('#incompleteAlert').show();
       }
     });
+
   });
 
   // 从本地存储加载数据
@@ -590,14 +628,17 @@
     // 等级颜色切换
     switch(level) {
       case 'Universal':
-        $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
-        break;
+          $riskLevel.attr('title', 'You are at a good status');
+          $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
+          break;
       case 'Targeted':
-        $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
-        break;
+          $riskLevel.attr('title', 'You need medical assistance');
+          $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
+          break;
       case 'Specialist':
-        $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
-        break;
+          $riskLevel.attr('title', 'You need medical assistance');
+          $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
+          break;
     }
 
     // 渲染ADVICE内容
@@ -670,7 +711,9 @@
     const symptomComplete = $('input[name="symptom"]:checked').length > 0;
 
     // 启用/禁用提交按钮
-    $('#submitBtn').prop('disabled',!(weightComplete && radioComplete && symptomComplete));
+    const isDisabled =!(weightComplete && radioComplete && symptomComplete);
+    $('#submitBtn').prop('disabled', isDisabled);
+
   }
 
   // 检查所有三份问卷是否完整
@@ -756,6 +799,7 @@
 
     return true;
   }
+
 
   // 提交所有问卷数据到服务器
   function submitAllQuestionnaires() {
