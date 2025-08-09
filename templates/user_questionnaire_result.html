@@ -46,8 +46,8 @@
 
 
 <div class="container mt-4">
-{#    <h1 class="mb-3">Prehabilitation</h1>#}
-    <p class="text-muted mb-4">Below is the QUESITIONNAIRE (ID:{{ question_id }}) result OF PATIENT {{ patient_name }} </p>
+{#    <h1 class="mb-3">Prehabilitation</h1>   (ID:{{ question_id }})  #}
+    <p class="text-muted mb-4">Below is the questionnare results of patient : {{ patient_name }} </p>
 
     <div class="row g-4">
         <!-- DASI 问卷卡片 - 始终可用 -->
@@ -57,7 +57,7 @@
                     <h5 class="card-title">Physical Activity</h5>
                     <p class="card-text text-muted">Assess daily activity ability and functional status</p>
                     <button class="btn btn-primary w-100"
-                            onclick="startQuestionnaire('dasi')">
+                            onclick="window.location.href='/doctor/result_detail?id={{ question_id }}&type=dasi'">
                       View
                     </button>
                 </div>
@@ -71,7 +71,7 @@
                     <h5 class="card-title">Psychological Wellbeing</h5>
                     <p class="card-text text-muted">Assess recent emotional and anxiety states</p>
                     <button class="btn btn-primary w-100"
-                            onclick="startQuestionnaire('phq4')">
+                            onclick="window.location.href='/doctor/result_detail?id={{ question_id }}&type=phq4'">
                      View
                     </button>
                 </div>
@@ -85,7 +85,7 @@
                     <h5 class="card-title">Nutrition</h5>
                     <p class="card-text text-muted">Assess nutritional status and daily activity ability</p>
                     <button class="btn btn-primary w-100"
-                            onclick="startQuestionnaire('pgsga')">
+                            onclick="window.location.href='/doctor/result_detail?id={{ question_id }}&type=pgsga'">
                         View
                     </button>
                 </div>
@@ -105,6 +105,7 @@
     {#    window.location.href = `/user/questionnaires/${type}`;#}
     {#}#}
     {##}
+
 </script>
 
 <!-- 引入 Bootstrap JS 依赖 -->

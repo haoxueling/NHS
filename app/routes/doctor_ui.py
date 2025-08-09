@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, redirect, url_for,request
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from app.models import User,Questionnaire
-
+import json
 
 bp = Blueprint('doctor_ui', __name__, url_prefix='/doctor')
 
@@ -48,6 +48,39 @@ def result_dashboard():
     except Exception as e:
         print(f"Error: {e}")
         return redirect(url_for('auth.login_page'))
+
+#查看某个问卷的其中一个板块的答案
+@bp.route("/result_detail")
+def result_detail():
+    try:
+        verify_jwt_in_request()
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return redirect(url_for('auth.login_page'))
+
+        # 获取 GET 参数
+        question_id = request.args.get('id')
+        type = request.args.get('type')
+        questionnaire=Questionnaire.query.filter_by(id=question_id).first()
+        print('type=',type)
+        if type=='dasi':
+            result_json=questionnaire.dasi_answers
+            return render_template('dasi_result.html',result=result_json)
+        elif type=='phq4':
+            result_json = questionnaire.phq4_answers
+
+            return render_template('phq4_result.html',result=result_json)
+        elif type=='pgsga':
+            result_json = questionnaire.pgsga_answers
+
+            return render_template('pgsga_result.html',result=result_json)
+        else:
+            a=1
+    except Exception as e:
+        print(f"Error: {e}")
+        return redirect(url_for('auth.login_page'))
+
 #
 # @bp.route("/question-info",methods=['POST'])
 # def result_dashboard():
