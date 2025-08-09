@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 引入 Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f7fa;
+      padding: 2rem 0;
+    }
+
+    /* 让问卷容器更宽，最大宽度调整为 1000px */
+   .container {
+      max-width: 1000px;
+      width: 90%;
+      margin: 0 auto;
+    }
+
+   .card {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    /* 自定义卡片头部样式 */
+    .custom-card-header {
+      background-color: #49b8ab;
+      border-bottom: 1px solid #ddd;
+      padding: 1.25rem;
+    }
+
+    /* 问题项容器， flex 布局让问题描述和按钮组水平排列 */
+    .question-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 1rem 0;
+    }
+
+    /* 按钮组容器：固定宽度 + flex，让每行按钮宽度一致 */
+     .btn-group-custom {
+      display: flex;
+      width: 220px; /* 固定总宽度，确保每行按钮组一样宽 */
+    }
+     .btn-option {
+      flex: 1; /* 每个按钮容器各占50% */
+    }
+
+    /* 隐藏原生单选框 */
+    .btn-option input[type="radio"] {
+      display: none;
+    }
+
+    /* 按钮样式：平分宽度 + 统一圆角 */
+    .btn-option label {
+      width: 100%; /* 按钮占满父容器（即50%宽度） */
+      text-align: center;
+      padding: 0.5rem 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #ccc;
+      margin: 0; /* 去除默认margin */
+    }
+
+    /* No 按钮默认样式 */
+    .btn-no {
+      background-color: #eee;
+      color: #666;
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .btn-no:hover {
+      background-color: #ddd;
+    }
+
+    /* Yes 按钮默认样式 */
+    .btn-yes {
+      background-color: #e9ecef;
+      color: #333;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .btn-yes:hover {
+      background-color: #d3d9df;
+    }
+
+    /* 选中状态样式 */
+    .btn-option input[type="radio"]:checked + label.btn-no {
+      background-color: #dc3545;
+      color: #000;
+    }
+
+    .btn-option input[type="radio"]:checked + label.btn-yes {
+      background-color: #3bd1cb;
+      color: #000;
+    }
+
+    /* 计分区域灰框样式 */
+    .info-section {
+      margin-top: 1.5rem;
+    }
+    .gray-box {
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+    }
+    .gray-box h5 {
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      color: #333;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+    .gray-box p {
+      margin: 0.5rem 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .gray-box ul {
+      margin: 0.5rem 0 0.5rem 1.5rem;
+      padding: 0;
+    }
+    .gray-box li {
+      margin-bottom: 0.3rem;
+      font-size: 14px;
+    }
+
+    .score-value {
+      font-weight: bold;
+      color: #2eaee2;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header custom-card-header">
+        <h2>Physical Activity</h2>
+{#        <p class="text-muted">Please answer the following questions based on your actual situation（1/3）</p>#}
+{#        <p class="text-muted" style="font-size: 16px; font-weight: bold;">Are you able to:</p>#}
+      </div>
+      <div class="card-body">
+        <form id="dasiForm">
+          <!-- 问题1 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Take care of self<br>e.g. eating, dressing, bathing, using the toilet</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q1-no" name="q1" value="0"
+                {% if result.q1 == '0' %} checked {% endif %} disabled/>
+                <label for="q1-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q1-yes" name="q1" value="2.75"
+                {% if result.q1 != '0' %} checked {% endif %} disabled/>
+                <label for="q1-yes" class="btn-yes">Yes +2.75</label>
+              </div>
+{#                <label>{{ result.q1 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题2 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Walk indoors</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q2-no" name="q2" value="0"
+                {% if result.q2 == '0' %} checked {% endif %} disabled/>
+                <label for="q2-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q2-yes" name="q2" value="1.75"
+                {% if result.q2 != '0' %} checked {% endif %} disabled/>
+                <label for="q2-yes" class="btn-yes">Yes +1.75</label>
+              </div>
+{#                <label>{{ result.q2 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题3 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Walk 1–2 blocks on level ground</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q3-no" name="q3" value="0"
+                {% if result.q3 == '0' %} checked {% endif %} disabled/>
+                <label for="q3-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q3-yes" name="q3" value="2.75"
+                {% if result.q3 != '0' %} checked {% endif %} disabled/>
+                <label for="q3-yes" class="btn-yes">Yes +2.75</label>
+              </div>
+{#                <label>{{ result.q3 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题4 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Climb a flight of stairs or walk up a hill</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q4-no" name="q4" value="0"
+                {% if result.q4 == '0' %} checked {% endif %} disabled/>
+                <label for="q4-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q4-yes" name="q4" value="5.5"
+                {% if result.q4 != '0' %} checked {% endif %} disabled/>
+                <label for="q4-yes" class="btn-yes">Yes +5.5</label>
+              </div>
+{#                <label>{{ result.q4 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题5 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Run a short distance</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q5-no" name="q5" value="0"
+                {% if result.q5 == '0' %} checked {% endif %} disabled/>
+                <label for="q5-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q5-yes" name="q5" value="8"
+                {% if result.q5 != '0' %} checked {% endif %} disabled/>
+                <label for="q5-yes" class="btn-yes">Yes +8</label>
+              </div>
+{#                <label>{{ result.q5 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题6 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do light work around the house<br>e.g. dusting, washing dishes</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q6-no" name="q6" value="0"
+                {% if result.q6 == '0' %} checked {% endif %} disabled/>
+                <label for="q6-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q6-yes" name="q6" value="2.7"
+                {% if result.q6 != '0' %} checked {% endif %} disabled/>
+                <label for="q6-yes" class="btn-yes">Yes +2.7</label>
+              </div>
+{#              <label>{{ result.q6 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题7 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do moderate work around the house<br>e.g. vacuuming, sweeping floors, carrying in</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q7-no" name="q7" value="0"
+                {% if result.q7 == '0' %} checked {% endif %} disabled/>
+                <label for="q7-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q7-yes" name="q7" value="3.5"
+                {% if result.q7 != '0' %} checked {% endif %} disabled/>
+                <label for="q7-yes" class="btn-yes">Yes +3.5</label>
+              </div>
+{#              <label>{{ result.q7 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题8 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do heavy work around the house<br>e.g. scrubbing floors, lifting or moving heavy furniture</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q8-no" name="q8" value="0"
+                {% if result.q8 == '0' %} checked {% endif %} disabled/>
+                <label for="q8-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q8-yes" name="q8" value="8"
+                {% if result.q8 != '0' %} checked {% endif %} disabled/>
+                <label for="q8-yes" class="btn-yes">Yes +8</label>
+              </div>
+{#              <label>{{ result.q8 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题9 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Do yardwork<br>e.g. raking leaves, weeding, pushing a power mower</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q9-no" name="q9" value="0"
+                {% if result.q9 == '0' %} checked {% endif %} disabled/>
+                <label for="q9-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q9-yes" name="q9" value="4.5"
+                {% if result.q9 != '0' %} checked {% endif %} disabled/>
+                <label for="q9-yes" class="btn-yes">Yes +4.5</label>
+              </div>
+{#              <label>{{ result.q9 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题10 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Have sexual relations</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q10-no" name="q10" value="0"
+                {% if result.q10 == '0' %} checked {% endif %} disabled/>
+                <label for="q10-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q10-yes" name="q10" value="5.25"
+                {% if result.q10 != '0' %} checked {% endif %} disabled/>
+                <label for="q10-yes" class="btn-yes">Yes +5.25</label>
+              </div>
+{#              <label>{{ result.q10 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题11 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Participate in moderate recreational activities<br>e.g. golf, bowling, dancing, doubles tennis, throwing a baseball or football</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q11-no" name="q11" value="0"
+                {% if result.q11 == '0' %} checked {% endif %} disabled/>
+                <label for="q11-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q11-yes" name="q11" value="6"
+                {% if result.q11 != '0' %} checked {% endif %} disabled/>
+                <label for="q11-yes" class="btn-yes">Yes +6</label>
+              </div>
+{#              <label>{{ result.q11 }}</label>#}
+            </div>
+          </div>
+          <!-- 问题12 -->
+          <div class="question-item">
+            <p class="fw-medium mb-0">Participate in strenuous sports<br>e.g. swimming, singles tennis, football, basketball, skiing</p>
+            <div class="btn-group-custom">
+              <div class="btn-option">
+                <input type="radio" id="q12-no" name="q12" value="0"
+                {% if result.q12 == '0' %} checked {% endif %} disabled/>
+                <label for="q12-no" class="btn-no">No 0</label>
+              </div>
+              <div class="btn-option">
+                <input type="radio" id="q12-yes" name="q12" value="7.5"
+                {% if result.q12 != '0' %} checked {% endif %} disabled/>
+                <label for="q12-yes" class="btn-yes">Yes +7.5</label>
+              </div>
+{#              <label>{{ result.q12 }}</label>#}
+            </div>
+          </div>
+
+          <!-- 计分区域 -->
+          <div class="info-section">
+            <!-- 第一个灰框：计分结果 -->
+            <div class="gray-box">
+              <h5>Scoring Results</h5>
+              <div class="row">
+                <!-- 风险等级显示 -->
+                <div class="col-12 mt-2">
+                    <p style="font-size: 24px;">Your risk level is:
+                        <span id="riskLevel" class="text-success">Universal</span>
+                    </p>
+                </div>
+                <div class="col-12">
+                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="metsScore">0</span> METs</p>
+                </div>
+                <div class="col-12">
+                  <p style="font-size: 13px;">The sum of yes(DASI) is: <span class="score-value" id="dasiScore">0</span> / 58.2 分</p>
+                </div>
+
+              </div>
+              <p>The higher the score (maximum 58.2), the higher the functional status.</p>
+            </div>
+
+            <!-- 第二个灰框：Facts & Figures -->
+            <div class="gray-box">
+              <h5>Facts & Figures</h5>
+              <p style="font-size: 16px;">Interpretation:</p>
+              <p>VO2 peak (mL/kg) = 0.43 x DASI + 9.6</p>
+              <p>METs (metabolic equivalents) = VO2 peak / 3.5</p>
+              <p>VO2 peak is maximal oxygen consumption (gold standard measurement is by exercise stress testing).</p>
+            </div>
+
+            <!-- 第三个灰框：ADVICE -->
+            <div class="gray-box">
+                <h5>ADVICE</h5>
+                <div id="adviceContent">
+                <!-- 动态生成内容 -->
+                </div>
+            </div>
+          </div>
+
+          <!-- 按钮区域：移除Back按钮，添加Exit按钮 -->
+          <div class="d-flex justify-content-between mt-4">
+{#            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>#}
+{#            <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>#}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入 jQuery 和 Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 登录状态检查
+    const token = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('access_token='))
+    ?.split('=')[1];
+
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    // 页面初始化：判断是否从PHQ4返回（是则保留数据，否则清除）
+    const isFromPhq4 = document.referrer.includes('phq4');
+    if (!isFromPhq4) {
+      // 非从PHQ4返回，清除旧数据（新开始或从仪表盘进入）
+      localStorage.removeItem('dasi_answers');
+    }
+
+    // 页面加载时恢复已保存的数据（仅当存在时）
+    $(document).ready(function () {
+      // 从localStorage加载数据（如果是从PHQ4返回）
+      if (isFromPhq4) {
+        loadSavedData();
+      } else {
+        // 新开始，使用默认值计算
+        calculateScores();
+      }
+
+      // 监听所有单选按钮变化（实时保存+计算分数）
+      $('input[type="radio"]').change(function () {
+        saveData();
+        calculateScores();
+      });
+
+      // 下一步按钮点击事件 - 保存数据并跳转
+      $('#nextBtn').click(function () {
+        saveData(); // 最后保存一次当前数据
+        window.location.href = '/user/questionnaires/phq4';
+      });
+
+      // 退出按钮点击事件 - 清除数据并返回仪表盘
+      $('#exitBtn').click(function () {
+        // 清除当前问卷的临时数据
+        localStorage.removeItem('dasi_answers');
+        // 跳转到用户仪表盘
+        window.location.href = '/user';
+      });
+    });
+
+    // 从localStorage加载已保存的数据
+    function loadSavedData() {
+      const savedData = localStorage.getItem('dasi_answers');
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        // 恢复每个问题的选中状态
+        for (let i = 1; i <= 12; i++) {
+          if (data.answers[`q${i}`]) {
+            $(`input[name="q${i}"][value="${data.answers[`q${i}`]}"]`).prop('checked', true);
+          }
+        }
+        // 恢复分数显示
+        $('#dasiScore').text(data.dasi_total || '0');
+        $('#metsScore').text(data.mets_score || '0');
+      }
+    }
+
+    // 实时保存数据到localStorage（仅在未提交状态下）
+    function saveData() {
+      const answers = {};
+      // 收集每个问题的答案
+      for (let i = 1; i <= 12; i++) {
+        answers[`q${i}`] = $(`input[name="q${i}"]:checked`).val() || '';
+      }
+
+      const formData = {
+        answers: answers,
+        dasi_total: $('#dasiScore').text(),
+        mets_score: $('#metsScore').text(),
+        level: getDasiLevelByMets()
+      };
+
+      // 存入localStorage（供临时返回修改使用）
+      localStorage.setItem('dasi_answers', JSON.stringify(formData));
+    }
+
+    // 计算DASI总分和METs分数
+    function calculateScores() {
+      let total = 0;
+      // 累加所有问题的分数
+      for (let i = 1; i <= 12; i++) {
+        const selectedValue = parseFloat($(`input[name="q${i}"]:checked`).val() || 0);
+        total += selectedValue;
+      }
+      // 保留一位小数
+      const dasiScore = total.toFixed(1);
+      // 计算VO2峰值和METs
+      const vo2Peak = (0.43 * total + 9.6).toFixed(2);
+      const metsScore = (vo2Peak / 3.5).toFixed(2);
+
+      // 更新显示
+      $('#dasiScore').text(dasiScore);
+      $('#metsScore').text(metsScore);
+
+      // 更新风险等级
+      const level = getDasiLevelByMets();
+      const $riskLevel = $('#riskLevel');
+      $riskLevel.text(level);
+
+      // 设置等级文本颜色
+      switch(level) {
+          case 'Universal':
+          $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
+          break;
+          case 'Targeted':
+          $riskLevel.removeClass('text-danger text-success').addClass('text-primary');
+          break;
+          case 'Specialist':
+          $riskLevel.removeClass('text-success text-primary').addClass('text-danger');
+          break;
+      }
+
+      updateAdvice(level);
+    }
+
+    // 更新建议内容
+    function updateAdvice(level) {
+      const linkContent = `
+        <p>1. Prehabilitation for Scotland: <a href="https://www.prehab.nhs.scot/" target="_blank" rel="noopener noreferrer">https://www.prehab.nhs.scot/</a></p>
+        <p>2. Prehabilitation information and workshop at Maggie's: <a href="https://www.maggies.org/what-we-offer/our-programmes/prehabilitation-getting-ready-for-treatment/" target="_blank" rel="noopener noreferrer">Prehabilitation – getting ready for treatment | Maggie's</a></p>
+        <p>3. Macmillan One to One Team: <a href="https://www.macmillan.org.uk/information-and-support/help-through-cancer/macmillan-one-to-one-support/where-we-are/macmillan-one-to-one-airth.html" target="_blank" rel="noopener noreferrer">Macmillan One to One - Airth, Scotland - | Macmillan Cancer Support</a></p>
+      `;
+
+      const tableContent = `
+        <table class="table table-sm table-bordered mt-2">
+        <thead>
+            <tr>
+            <th>METS</th>
+            <th>LEVEL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>>7</td><td>Universal</td></tr>
+            <tr><td>4-7</td><td>Targeted</td></tr>
+            <tr><td><4</td><td>Specialist</td></tr>
+        </tbody>
+        </table>
+      `;
+
+      const adviceParts = [];
+
+      // 非Universal等级添加红色提示
+      if (level!== 'Universal') {
+          adviceParts.push(`
+          <p style="font-size: 24px; font-weight: bold; color: red;">
+              You should consult a professional medical team for assistance.
+          </p>
+          `);
+      }
+
+      adviceParts.push(linkContent);
+      adviceParts.push(tableContent);
+
+      $('#adviceContent').html(adviceParts.join(''));
+    }
+
+    // 根据METS值判定风险等级
+    function getDasiLevelByMets() {
+      const mets = parseFloat($('#metsScore').text());
+      if (mets > 7) {
+        return 'Universal';
+      } else if (mets >= 4 && mets <= 7) {
+        return 'Targeted';
+      } else {
+        return 'Specialist';
+      }
+    }
+  </script>
+</body>
+</html>
