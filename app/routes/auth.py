@@ -1,6 +1,6 @@
 """用户注册登录接口"""
 #print("auth.py 模块开始加载", flush=True)
-from flask import Blueprint, request, jsonify, render_template, redirect, make_response, Flask, session, url_for
+from flask import Blueprint, request, jsonify, render_template, redirect, make_response, session, url_for
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 from app import db
@@ -31,46 +31,52 @@ def register():
 
     data = request.json
     if not data:
-        return jsonify(msg='请求数据为空'), 400
+        return jsonify(msg='Request data is empty'), 400
 
     # 验证必要字段
-    # required_fields = ['name', 'gender', 'date_of_birth', 'medical_id', 'email', 'phone', 'password']
-    required_fields = ['name', 'gender', 'date_of_birth', 'email', 'phone', 'password',"role"]
+    required_fields = ['name', 'gender', 'date_of_birth', 'email', 'phone', 'password', "role"]
     for field in required_fields:
         if field not in data or not data[field]:
-            return jsonify(msg=f'缺少必要字段或字段值为空: {field}'), 400
+            return jsonify(msg=f'Missing necessary fields or empty field values: {field}'), 400
 
-    # 检查医疗账号和邮箱唯一性
-    if User.query.filter_by(medical_id=data['medical_id']).first():
-        return jsonify(msg='医疗账号已被注册'), 400
+    # 检查邮箱唯一性
+    #if User.query.filter_by(email=data['email']).first():
+        #return jsonify(msg='该邮箱已被注册'), 400
 
     role = data['role']
 
     if role == 'user':  # 患者注册
         chi_number = data.get('chi_number')
+        tumor_type = data.get('tumor_type')  # 获取肿瘤类型
+
+        # 验证患者特有字段
         if not chi_number:
-            return jsonify(msg='请提供 CHI Number'), 400
+            return jsonify(msg='Please provide CHI Number'), 400
+        if not tumor_type:
+            return jsonify(msg='Please select tumor type'), 400
 
         # 确保 CHI 号码唯一（包括兼容 medical_id 字段）
         if User.query.filter(
                 (User.chi_number == chi_number) | (User.medical_id == chi_number)
         ).first():
-            return jsonify(msg='该 CHI Number 已被注册'), 400
+            return jsonify(msg='This CHI Number has already been registered'), 400
 
         medical_id = chi_number  # 为了模型中 medical_id 非空约束，写入相同值
 
     elif role == 'doctor':  # 临床人员注册
         medical_id = data.get('medical_id')
+        tumor_type = None  # 医生无肿瘤类型
+
         if not medical_id:
-            return jsonify(msg='请提供 Medical ID'), 400
+            return jsonify(msg='Please provide Medical ID'), 400
 
         if User.query.filter_by(medical_id=medical_id).first():
-            return jsonify(msg='该 Medical ID 已被注册'), 400
+            return jsonify(msg='This medical ID has already been registered'), 400
 
         chi_number = None  # 医生无 chi_number
 
     else:
-        return jsonify(msg='无效的角色'), 400
+        return jsonify(msg='Invalid role'), 400
 
 
     # 创建用户（捕获数据库异常）
@@ -83,18 +89,19 @@ def register():
             chi_number=chi_number,
             email=data['email'],
             phone=data['phone'],
-            role=role
+            role=role,
+            tumor_type=tumor_type  # 新增肿瘤类型字段
         )
         user.set_password(data['password'])  # 确保User模型实现了set_password方法
         db.session.add(user)
         db.session.commit()
-        return jsonify(msg='注册成功'), 201
+        return jsonify(msg='registered successfully'), 201
     except IntegrityError as e:
         db.session.rollback()
-        return jsonify(msg=f'注册失败：数据库插入错误 {str(e)}'), 500
+        return jsonify(msg=f'Registration failed: Database insertion error {str(e)}'), 500
     except Exception as e:
         db.session.rollback()
-        return jsonify(msg=f'注册失败：{str(e)}'), 500
+        return jsonify(msg=f'register has failed：{str(e)}'), 500
 
 # 登录接口（前端请求 /api/login）
 @bp.route('/api/login', methods=['POST', 'OPTIONS'])
@@ -115,27 +122,27 @@ def login():
         password = data.get('password')
 
         if not role or not password:
-            return jsonify(msg='缺少角色或密码'), 400
+            return jsonify(msg='Missing role or password'), 400
 
         user = None
 
         if role == 'patient':
             chi_number = data.get('chi_number')
             if not chi_number:
-                return jsonify(msg='缺少 CHI Number'), 400
+                return jsonify(msg='lack of CHI Number'), 400
             user = User.query.filter_by(role='user', chi_number=chi_number).first()
         # 数据库里面的role doctor 字段对应clinician ，user字段对应patient
         elif role == 'clinician':
             medical_id = data.get('medical_id')
             if not medical_id:
-                return jsonify(msg='缺少 Medical ID'), 400
+                return jsonify(msg='lack of Medical ID'), 400
             user = User.query.filter_by(role='doctor', medical_id=medical_id).first()
 
         else:
-            return jsonify(msg='无效的角色'), 400
+            return jsonify(msg='Invalid role'), 400
 
         if not user or not user.check_password(password):
-            return jsonify(msg='账号或密码错误'), 401
+            return jsonify(msg='Account or password error'), 401
 
         # 生成令牌
         access_token = create_access_token(
@@ -150,7 +157,8 @@ def login():
                   'name': user.name,
                   'role': user.role,
                   'medical_id': user.medical_id,
-                 'chi_number': user.chi_number
+                 'chi_number': user.chi_number,
+                 'tumor_type': user.tumor_type  # 登录响应中返回肿瘤类型
                   }
         ))
         resp.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -163,6 +171,7 @@ def login():
 @bp.route('/')
 def index():
     return redirect('/login')  # 修正重定向路径，匹配登录页面路由
+
 # 退出登录路由（清除Token并跳转登录页）
 @bp.route('/logout')
 def logout():

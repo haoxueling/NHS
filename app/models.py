@@ -19,7 +19,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum('user', 'nurse', 'doctor'), default='user')  # 支持医生角色
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    # 新增肿瘤类型字段（患者专用，允许为空不影响医生角色）
+    tumor_type = db.Column(db.String(50), nullable=True)
     # 关联：一次提交对应一条记录，一条记录存三份问卷
     questionnaires = db.relationship(
         'Questionnaire',
