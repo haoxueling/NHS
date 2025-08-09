@@ -65,16 +65,19 @@ def result_detail():
         questionnaire=Questionnaire.query.filter_by(id=question_id).first()
         print('type=',type)
         if type=='dasi':
+            score=questionnaire.dasi_score
             result_json=questionnaire.dasi_answers
-            return render_template('dasi_result.html',result=result_json)
+            return render_template('dasi_result.html',result=result_json,score=score)
         elif type=='phq4':
             result_json = questionnaire.phq4_answers
+            score=questionnaire.phq4_score
 
-            return render_template('phq4_result.html',result=result_json)
+            return render_template('phq4_result.html',result=result_json,score=score)
         elif type=='pgsga':
             result_json = questionnaire.pgsga_answers
+            score=questionnaire.pgsga_score
 
-            return render_template('pgsga_result.html',result=result_json)
+            return render_template('pgsga_result.html',result=result_json,score=score)
         else:
             a=1
     except Exception as e:

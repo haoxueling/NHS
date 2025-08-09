@@ -184,8 +184,6 @@
           <ul id="incompleteItems"></ul>
         </div>
 
-        <form id="pgsgaForm">
-             <label>{{ result }}</label>
              <fieldset disabled>
           <!-- 1. 体重相关问题 -->
           <div class="question-section">
@@ -194,25 +192,25 @@
             <div class="weight-inputs">
               <div>
                 I currently weigh about <input type="number" id="current_weight" name="current_weight"
-                value="{{ result.get('weight', {}).get('current', '') }}"
-                                               required> kg
+                value="{{ result.weight.current }}"
+                                               disabled> kg
               </div>
               <div>
                 I am about <input type="number" id="height" name="height"
-                                   value="{{ result.get('weight', {}).get('height', '') }}"
-                                  required> cm tall
+                                   value="{{ result.weight.height }}"
+                                  disabled> cm tall
               </div>
             </div>
             <div class="weight-inputs">
               <div>
                 One month ago I weighed about <input type="number" id="weight_1month" name="weight_1month"
-                                                      value="{{ result.get('weight', {}).get('weight_1month', '') }}"
-                                                     required> kg
+                                                      value="{{ result.weight.weight_1month }}"
+                                                     disabled> kg
               </div>
               <div>
                 Six months ago I weighed about <input type="number" id="weight_6month" name="weight_6month"
-                                                       value="{{ result.get('weight', {}).get('weight_6month', '') }}"
-                                                      required> kg
+                                                       value="{{ result.weight.weight_6month }}"
+                                                      disabled> kg
               </div>
 
                   <!-- 体重相关问题 两周前 value=0 没区分 是not changed还是increased-->
@@ -220,15 +218,18 @@
             <p class="question-text">During the past two weeks my weight has:</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="weight_change-1" name="weight_change" value="1" required />
+                <input type="radio" id="weight_change-1" name="weight_change" value="1"
+                       {% if result.weight.change.label == 'decreased' %} checked {% endif %} disabled />
                 <label for="weight_change-1">decreased <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="weight_change-0" name="weight_change" value="0" required checked/>
+                <input type="radio" id="weight_change-0" name="weight_change" value="0"
+                       {% if result.weight.change.label == 'unchanged' %} checked {% endif %} disabled />
                 <label for="weight_change-0">not changed <span>0</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="weight_change-2" name="weight_change" value="0" />
+                <input type="radio" id="weight_change-2" name="weight_change" value="0"
+                       {% if result.weight.change.label == 'increased' %} checked {% endif %} disabled/>
                 <label for="weight_change-2">increased <span>0</span></label>
               </div>
             </div>
@@ -240,15 +241,18 @@
             <p class="question-text">As compared to my normal intake, I would rate my food intake during the past month as:</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="food_intake-0" name="food_intake" value="0" required checked/>
+                <input type="radio" id="food_intake-0" name="food_intake" value="0"
+                       {% if result.food_intake.label == 'unchanged' %} checked {% endif %} disabled />
                 <label for="food_intake-0">unchanged <span>0</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="food_intake-1" name="food_intake" value="0" />
+                <input type="radio" id="food_intake-1" name="food_intake" value="0"
+                 {% if result.food_intake.label == 'more' %} checked {% endif %} disabled/>
                 <label for="food_intake-1">More than usual <span>0</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="food_intake-2" name="food_intake" value="1" />
+                <input type="radio" id="food_intake-2" name="food_intake" value="1"
+                 {% if result.food_intake.label == 'less' %} checked {% endif %} disabled/>
                 <label for="food_intake-2">less than usual <span>+1</span></label>
               </div>
             </div>
@@ -256,27 +260,33 @@
             <p class="question-text">I am now taking:</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="food_type-0" name="food_type" value="1" required checked/>
+                <input type="radio" id="food_type-0" name="food_type" value="1"
+                {% if result.food_type.label == 'normal_less' %} checked {% endif %} disabled/>
                 <label for="food_type-0">normal food but less than normal amount <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="food_type-1" name="food_type" value="2" />
+                <input type="radio" id="food_type-1" name="food_type" value="2"
+                {% if result.food_type.label == 'little_solid' %} checked {% endif %} disabled/>
                 <label for="food_type-1">little solid food <span>+2</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="food_type-2" name="food_type" value="3" />
+                <input type="radio" id="food_type-2" name="food_type" value="3"
+                {% if result.food_type.label == 'liquid_only' %} checked {% endif %} disabled/>
                 <label for="food_type-2">only liquids <span>+3</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="food_type-3" name="food_type" value="3" />
+                <input type="radio" id="food_type-3" name="food_type" value="3"
+                {% if result.food_type.label == 'nutrition_supplement' %} checked {% endif %} disabled/>
                 <label for="food_type-3">only nutrition supplements <span>+3</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="food_type-4" name="food_type" value="4" />
+                <input type="radio" id="food_type-4" name="food_type" value="4"
+               {% if result.food_type.label == 'little' %} checked {% endif %} disabled />
                 <label for="food_type-4">very little of anything <span>+4</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="food_type-5" name="food_type" value="0" />
+                <input type="radio" id="food_type-5" name="food_type" value="0"
+                {% if result.food_type.label == 'tube_vein' %} checked {% endif %} disabled/>
                 <label for="food_type-5">only tube feedings or only nutrition by vein <span>+0</span></label>
               </div>
             </div>
@@ -288,62 +298,74 @@
             <p class="question-text">I have had the following problems that have kept me from eating enough during the past two weeks (check all that apply)</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="checkbox" id="symptom-0" name="symptom" value="0" required checked/>
+                <input type="checkbox" id="symptom-0" name="symptom" value="0"
+                {%  if 'no_problem_eating' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-0">no problem eating <span>+0</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-1" name="symptom" value="3" />
+                <input type="checkbox" id="symptom-1" name="symptom" value="3"
+                {%  if 'no_appetite' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-1">no appetite,just did not feel like eating <span>+3</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-2" name="symptom" value="1" />
+                <input type="checkbox" id="symptom-2" name="symptom" value="1"
+                        {%  if 'nausea' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-2">nausea <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-3" name="symptom" value="3" />
+                <input type="checkbox" id="symptom-3" name="symptom" value="3"
+                       {%  if 'vomit' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-3">vomiting <span>+3</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-4" name="symptom" value="1" />
+                <input type="checkbox" id="symptom-4" name="symptom" value="1"
+                       {%  if 'constipation' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-4">constipation <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-5" name="symptom" value="3" />
+                <input type="checkbox" id="symptom-5" name="symptom" value="3"
+                       {%  if 'diarrhea' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-5">diarrhea <span>+3</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-6" name="symptom" value="2" />
+                <input type="checkbox" id="symptom-6" name="symptom" value="2"
+                       {%  if 'mouth_sores' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-6">mouth sores <span>+2</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-7" name="symptom" value="1" />
+                <input type="checkbox" id="symptom-7" name="symptom" value="1"
+                       {%  if 'dry_mouth' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-7">dry mouth <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-8" name="symptom" value="1" />
+                <input type="checkbox" id="symptom-8" name="symptom" value="1"
+                       {%  if 'smells_bothered' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-8">smells bother me <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-9" name="symptom" value="1" />
+                <input type="checkbox" id="symptom-9" name="symptom" value="1"
+                       {%  if 'feel_full_quickly' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-9">feel full quickly <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-10" name="symptom" value="2" />
+                <input type="checkbox" id="symptom-10" name="symptom" value="2"
+                       {%  if 'problem_swallowing' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-10">problems swallowing <span>+2</span></label>
               </div>
               <div class="btn-option">
-                <input type="checkbox" id="symptom-11" name="symptom" value="1" />
+                <input type="checkbox" id="symptom-11" name="symptom" value="1"
+                       {%  if 'fatigue' in result.symptoms | map(attribute='label') | list %} checked {% endif %} disabled/>
                 <label for="symptom-11">fatigue <span>+1</span></label>
               </div>
               <div class="btn-option">
                 <input type="checkbox" id="symptom-12" name="symptom" value="3" />
                 <label for="symptom-12">pain;where? <span>+3</span></label>
-                <input type="text" id="pain_detail" class="form-control mt-1" placeholder="Please specify where the pain is" />
+                <input type="text" id="pain_detail" class="form-control mt-1" value="{{ result.pain_detail }}"/>
               </div>
               <div class="btn-option">
                 <input type="checkbox" id="symptom-13" name="symptom" value="1" />
                 <label for="symptom-13">other ** <span>+1</span></label>
-                <input type="text" id="other_detail" class="form-control mt-1" placeholder="Please specify other symptoms" />
+                <input type="text" id="other_detail" class="form-control mt-1"  value="{{ result.other_detail }}" />
               </div>
             </div>
             <p class="question-text">**Examples: depression, money, or dental problems</p>
@@ -355,23 +377,29 @@
             <p class="question-text">Over the past month, I would generally rate my activity as:</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="activity-0" name="activity" value="0" required checked/>
+                <input type="radio" id="activity-0" name="activity" value="0"
+                {% if result.activity.label == 'normal' %} checked {% endif %} disabled/>
                 <label for="activity-0">normal with no limitations <span>+0</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="activity-1" name="activity" value="1" />
+                <input type="radio" id="activity-1" name="activity" value="1"
+                {% if result.activity.label == 'not_normal_but_able_to_getby' %} checked {% endif %} disabled/>
                 <label for="activity-1">not my normal self, but able to be up and about with fairly normal activities <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="activity-2" name="activity" value="2" />
+                <input type="radio" id="activity-2" name="activity" value="2"
+                {% if result.activity.label == 'no_feeling_up_to_most_things' %} checked {% endif %} disabled/>
                 <label for="activity-2">no feeling up to most things, but in bed or chair less than half the day <span>+2</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="activity-3" name="activity" value="3" />
+                <input type="radio" id="activity-3" name="activity" value="3"
+                    {% if result.activity.label == 'little_activity_most_time_in_bed' %} checked {% endif %} disabled/>
                 <label for="activity-3">able to do little activity and spend most of the day in bed or chair <span>+3</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="activity-4" name="activity" value="4" />
+                <input type="radio" id="activity-4" name="activity" value="4"
+                   {% if result.activity.label == 'bed_ridden' %} checked {% endif %} disabled/>
+
                 <label for="activity-4">pretty much bed ridden, rarely out of bed <span>+4</span></label>
               </div>
             </div>
@@ -389,7 +417,7 @@
                     </p>
                 </div>
                 <div class="col-12">
-                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="pgsgaScore">0</span> points</p>
+                  <p style="font-size: 20px;">Your score is : <span class="score-value" id="pgsgaScore">0</span>points</p>
                 </div>
                 <div class="col-12">
                   <p>Scores ≤1 suggest low risk which may not require treatment.</p>
@@ -425,7 +453,7 @@
 {#            </div>#}
 {#          </div>#}
                    <fieldset>
-        </form>
+
       </div>
     </div>
   </div>
