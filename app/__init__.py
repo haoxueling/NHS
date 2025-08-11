@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
-from flask import Flask
+from flask import Flask, g, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate  # 导入 Flask-Migrate
 from flask_cors import CORS
 from app.config import Config
+
 
 # 初始化扩展
 db = SQLAlchemy()
@@ -14,7 +15,17 @@ migrate = Migrate()  # 初始化迁移工具
 
 
 def create_app(config_class=Config):
-    app = Flask(__name__, template_folder='templates')
+    # 确定项目根目录（假设 app 文件夹与 templates 和 static 同级）
+    project_root = Path(__file__).parent.parent
+    
+    # 显式指定 static 和 templates 文件夹的路径
+    static_folder_path = str(project_root / "static")
+    template_folder_path = str(project_root / "templates")
+    
+    # 创建 Flask 应用实例，并传入正确的路径
+    app = Flask(__name__,
+                static_folder=static_folder_path,
+                template_folder=template_folder_path)
 
     # 构建templates绝对路径并验证
     current_file = Path(__file__)
@@ -41,15 +52,33 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)  # 关联 app 和 db
     jwt.init_app(app)
     CORS(app, supports_credentials=True)
+    
+    @app.before_request
+    def load_logged_in_user():
+        # """在每个请求之前加载登录用户信息。"""
+        from app.models import User
+        user_id = session.get('user_id')
+        if user_id is None:
+            g.user = None
+        else:
+            # 假设你的 User 模型可以通过 id 查询
+            g.user = User.query.get(user_id)
+    
 
     # 注册蓝图
     from app.routes.auth import bp as auth_bp
     from app.routes.user import bp as user_bp
     from app.routes.staff import bp as staff_bp
     from app.routes.doctor_ui import bp as doctor_ui_bp
+    from app.routes.statistics_routes import statistics_bp
+    from app.routes.user_q import user_q_bp
+    from app.routes.doctor_a import doctor_a_bp
     app.register_blueprint(auth_bp, url_prefix='/')
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(staff_bp, url_prefix='/api/staff')
     app.register_blueprint(doctor_ui_bp)
+    app.register_blueprint(statistics_bp)
+    app.register_blueprint(user_q_bp, url_prefix='/user')
+    app.register_blueprint(doctor_a_bp, url_prefix='/doctor')
 
     return app

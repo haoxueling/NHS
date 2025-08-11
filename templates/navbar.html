@@ -52,7 +52,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
       <!-- 品牌/Logo -->
-      <a class="navbar-brand" href="/user">
+      <a class="navbar-brand" >
         <i class="bi bi-clipboard-check-fill me-2"></i>Questionnaire System
       </a>
 
@@ -72,16 +72,19 @@
       <!-- 导航菜单 -->
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/user/questionnaires/history">
-              <i class="bi bi-house-door-fill me-1"></i>HomePage
-            </a>
-          </li>
+          {% block main_nav_item %}
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/user">
               <i class="bi bi-file-text-fill me-1"></i>Questionnaire
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/user/my_questions">
+              <i class="bi bi-file-text-fill me-1"></i>Q&A
+            </a>
+          </li>
+          {% endblock %}
+          {% block navbar_links %}{% endblock %}
         </ul>
 
         <!-- 右侧用户下拉区域 -->
@@ -144,5 +147,7 @@
       console.log('✅ 导航栏下拉功能初始化成功（纯原生JS实现）');
     });
   </script>
+
+  {% block content %}{% endblock %}
 </body>
 </html>

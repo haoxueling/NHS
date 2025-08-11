@@ -143,6 +143,10 @@ def login():
 
         if not user or not user.check_password(password):
             return jsonify(msg='Account or password error'), 401
+        
+        # ✅ 关键改动：在这里将用户信息存入 session
+        session['user_id'] = user.id
+        session['role'] = user.role
 
         # 生成令牌
         access_token = create_access_token(
@@ -176,6 +180,8 @@ def index():
 @bp.route('/logout')
 def logout():
     """用户退出登录：清除Token Cookie并重定向到登录页"""
+    # ✅ 关键修改：在重定向之前清除 Flask session
+    session.clear()
     # 创建响应对象，用于删除Cookie
     resp = make_response(redirect(url_for('auth.login_page')))  # 重定向到登录页面
     # 删除存储的access_token Cookie（与登录时设置的Cookie路径保持一致）

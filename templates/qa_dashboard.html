@@ -1,0 +1,139 @@
+{% extends 'navbar.html' %}
+
+{% block navbar_links %}
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="/user_type_distribution">
+    <i class="bi bi-pie-chart-fill me-1"></i>Distribution
+  </a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="qa_dashboard">
+    <i class="bi bi-question-circle-fill me-1"></i>Q&A
+  </a>
+</li>
+{% endblock %}
+
+{% block main_nav_item %}
+<li class="nav-item">
+  <a class="nav-link" href="/doctor">
+    <i class="bi bi-person-circle me-1"></i>Doctor
+  </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Questions from Patients</h1>
+  
+  <div class="list-group">
+    {% for question in questions %}
+    <a href="#question-{{ question.id }}" class="list-group-item list-group-item-action mb-3 shadow-sm p-3">
+      <div class="d-flex w-100 justify-content-between align-items-center">
+        <!-- ✅ 修改：加粗并增大字体 -->
+        <h5 class="mb-1 fw-bold fs-4">{{ question.title }}</h5>
+        <div class="d-flex gap-2 align-items-center">
+          <small class="text-muted">{{ question.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+          <!-- ✅ 修改：统一字体大小为 fs-6 -->
+          <span class="badge fs-6
+            {% if question.answer %}bg-success{% else %}bg-warning{% endif %}">
+            {% if question.answer %}Answered{% else %}Waiting for an answer{% endif %}
+          </span>
+          <span class="badge bg-secondary fs-6">{{ question.user_tumor_type }}</span>
+          <span class="badge fs-6
+            {% if question.user_type == 'specialist' %}bg-danger
+            {% elif question.user_type == 'targeted' %}bg-primary
+            {% else %}bg-success
+            {% endif %}">
+            {{ question.user_type | capitalize }}
+          </span>
+        </div>
+      </div>
+      <p class="mb-1">From: <span class="fw-bold">{{ question.user_name }}</span></p>
+    </a>
+    
+    <div id="question-{{ question.id }}" class="card mb-4" style="display: none;">
+      <div class="card-body">
+        <h5 class="card-title">{{ question.title }}</h5>
+        <p class="text-muted">Asked on {{ question.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        <p class="card-text">{{ question.content }}</p>
+
+        <hr>
+        
+        <div id="answer-container-{{ question.id }}">
+          {% if question.answer %}
+          <div class="alert alert-success d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Answered by {{ question.doctor_name }} on {{ question.answered_at.strftime('%Y-%m-%d %H:%M') }}
+          </div>
+          <p>{{ question.answer }}</p>
+          {% else %}
+          <p class="text-muted">This question has not been answered yet.</p>
+          {% endif %}
+        </div>
+        
+        <form class="mt-4 answer-form" data-question-id="{{ question.id }}">
+          <div class="mb-3">
+            <label for="answer-{{ question.id }}" class="form-label">Your Answer</label>
+            <textarea class="form-control" id="answer-{{ question.id }}" name="answer" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit Answer</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // 切换回答区域的显示/隐藏
+  document.querySelectorAll('.list-group-item-action').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = item.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.style.display = targetElement.style.display === 'block' ? 'none' : 'block';
+      }
+    });
+  });
+
+  // 处理回答表单提交
+  document.querySelectorAll('.answer-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const questionId = form.dataset.questionId;
+      const answerContent = form.querySelector('textarea[name="answer"]').value;
+      
+      const response = await fetch(`{{ url_for('doctor_a.answer_question', question_id=0) }}`.replace('0', questionId), {
+        method: 'POST',
+        body: new URLSearchParams({ answer: answerContent }),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // 动态更新页面，显示回答
+        const answerContainer = document.getElementById(`answer-container-${questionId}`);
+        const doctorName = '{{ g.user.name }}';
+        const now = new Date().toISOString().slice(0, 16).replace('T', ' ');
+        
+        answerContainer.innerHTML = `
+          <div class="alert alert-success d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Answered by ${doctorName} on ${now}
+          </div>
+          <p>${answerContent}</p>
+        `;
+        
+        form.style.display = 'none'; // 隐藏表单
+      } else {
+        alert('Failed to submit answer: ' + result.error);
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

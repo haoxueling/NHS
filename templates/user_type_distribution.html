@@ -1,0 +1,140 @@
+{% extends 'navbar.html' %}
+
+{% block navbar_links %}
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="/user_type_distribution">
+    <i class="bi bi-pie-chart-fill me-1"></i>Distribution
+  </a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="qa_dashboard">
+    <i class="bi bi-question-circle-fill me-1"></i>Q&A
+  </a>
+</li>
+{% endblock %}
+
+{% block main_nav_item %}
+<li class="nav-item">
+  <a class="nav-link" href="/doctor">
+    <i class="bi bi-person-circle me-1"></i>Doctor
+  </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-3">User Type Distribution</h1>
+
+  <div class="mb-4">
+    <label for="tumorType" class="form-label">Select Tumor Type:</label>
+    <select id="tumorType" class="form-select" onchange="window.location.href = '/user_type_distribution?tumor_type=' + this.value;">
+      <option value="all" {% if selected_tumor == 'all' %}selected{% endif %}>All Tumor Types</option>
+      <option value="Colorectal Team" {% if selected_tumor == 'Colorectal Team' %}selected{% endif %}>Colorectal Team</option>
+      <option value="Stoma Care Team" {% if selected_tumor == 'Stoma Care Team' %}selected{% endif %}>Stoma Care Team</option>
+      <option value="Upper GI Team" {% if selected_tumor == 'Upper GI Team' %}selected{% endif %}>Upper GI Team</option>
+      <option value="Haematology Team" {% if selected_tumor == 'Haematology Team' %}selected{% endif %}>Haematology Team</option>
+      <option value="Lung Team" {% if selected_tumor == 'Lung Team' %}selected{% endif %}>Lung Team</option>
+      <option value="Breast Care Team" {% if selected_tumor == 'Breast Care Team' %}selected{% endif %}>Breast Care Team</option>
+      <option value="Skin Team" {% if selected_tumor == 'Skin Team' %}selected{% endif %}>Skin Team</option>
+      <option value="Head and Neck Team" {% if selected_tumor == 'Head and Neck Team' %}selected{% endif %}>Head and Neck Team</option>
+      <option value="Gynaecology Team" {% if selected_tumor == 'Gynaecology Team' %}selected{% endif %}>Gynaecology Team</option>
+      <option value="Chemotherapy Team" {% if selected_tumor == 'Chemotherapy Team' %}selected{% endif %}>Chemotherapy Team</option>
+    </select>
+  </div>
+
+  <p class="text-muted">Total Users: <strong>{{ total_users }}</strong></p>
+
+  <div class="table-responsive">
+    <table class="table table-bordered text-center">
+      <thead class="table-light">
+        <tr>
+          <th>User Type</th>
+          <th>Count</th>
+          <th>Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-danger">Specialist</td>
+          <td>{{ type_count['specialist'] }}</td>
+          <td>{{ percentages['specialist'] }}</td>
+        </tr>
+        <tr>
+          <td class="text-primary">Targeted</td>
+          <td>{{ type_count['targeted'] }}</td>
+          <td>{{ percentages['targeted'] }}</td>
+        </tr>
+        <tr>
+          <td class="text-success">Universal</td>
+          <td>{{ type_count['universal'] }}</td>
+          <td>{{ percentages['universal'] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4" style="max-width: 600px; margin: auto;">
+    <canvas id="userTypePieChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 获取后端传入的数据
+    const counts = [
+      {{ type_count['specialist'] }}, 
+      {{ type_count['targeted'] }}, 
+      {{ type_count['universal'] }}
+    ];
+    const percentages = [
+      "{{ percentages['specialist'] }}",
+      "{{ percentages['targeted'] }}",
+      "{{ percentages['universal'] }}"
+    ];
+    const labels = ['Specialist', 'Targeted', 'Universal'];
+    
+    const ctx = document.getElementById('userTypePieChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: counts,
+          backgroundColor: [
+            '#dc3545', // Danger
+            '#0d6efd', // Primary
+            '#198754'  // Success
+          ],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed !== null) {
+                  const count = context.parsed;
+                  const percentage = percentages[context.dataIndex];
+                  label += `${count} (${percentage})`;
+                }
+                return label;
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

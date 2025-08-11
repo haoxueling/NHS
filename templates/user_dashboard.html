@@ -65,3 +65,67 @@
 <!-- 引入 Bootstrap JS 依赖 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- ✅ Updated: Recommended Resources Section -->
+<div class="container mt-5">
+    <h2 class="mb-4">Recommended Resources</h2>
+    <div class="d-flex flex-column gap-4">
+
+        <!-- NHS Resource Card -->
+        <a href="https://www.prehab.nhs.scot/" target="_blank" class="text-decoration-none">
+            <div class="card shadow h-100">
+                <!-- ✅ 修改：增大了卡片内边距 -->
+                <div class="card-body d-flex align-items-center p-4">
+                    <!-- ✅ 修改：增大了图片宽度 -->
+                    <div class="flex-shrink-0 me-4" style="width: 180px;">
+                        <img src="{{ url_for('static', filename='images/NHS.png') }}" class="img-fluid rounded" alt="NHS logo">
+                    </div>
+                    <div class="flex-grow-1">
+                        <!-- ✅ 修改：标题字体改为 h4 -->
+                        <h4 class="fw-bold mb-2">NHS Scotland Prehabilitation</h4>
+                        <!-- ✅ 修改：移除了 small 类 -->
+                        <p class="text-muted mb-0">Provides official prehabilitation information and guidance authorized by the NHS in Scotland, helping patients prepare thoroughly for surgery.</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Maggie's Resource Card -->
+        <a href="https://www.maggies.org/" target="_blank" class="text-decoration-none">
+            <div class="card shadow h-100">
+                <!-- ✅ 修改：增大了卡片内边距 -->
+                <div class="card-body d-flex align-items-center p-4">
+                    <!-- ✅ 修改：增大了图片宽度 -->
+                    <div class="flex-shrink-0 me-4" style="width: 180px;">
+                        <img src="{{ url_for('static', filename='images/maggies.png') }}" class="img-fluid rounded" alt="Maggie's logo">
+                    </div>
+                    <div class="flex-grow-1">
+                        <!-- ✅ 修改：标题字体改为 h4 -->
+                        <h4 class="fw-bold mb-2">Maggie's Centres</h4>
+                        <!-- ✅ 修改：移除了 small 类 -->
+                        <p class="text-muted mb-0">A charity providing free emotional, psychological, and practical support for people with cancer and their families. You can find professional counseling and support groups here.</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Macmillan Resource Card -->
+        <a href="https://www.macmillan.org.uk/" target="_blank" class="text-decoration-none">
+            <div class="card shadow h-100">
+                <!-- ✅ 修改：增大了卡片内边距 -->
+                <div class="card-body d-flex align-items-center p-4">
+                    <!-- ✅ 修改：增大了图片宽度 -->
+                    <div class="flex-shrink-0 me-4" style="width: 180px;">
+                        <img src="{{ url_for('static', filename='images/macmillan.png') }}" class="img-fluid rounded" alt="Macmillan logo">
+                    </div>
+                    <div class="flex-grow-1">
+                        <!-- ✅ 修改：标题字体改为 h4 -->
+                        <h4 class="fw-bold mb-2">Macmillan One-to-One Team</h4>
+                        <!-- ✅ 修改：移除了 small 类 -->
+                        <p class="text-muted mb-0">Macmillan Cancer Support offers professional, one-to-one guidance and information. They can help you with a variety of questions and challenges related to cancer treatment.</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>

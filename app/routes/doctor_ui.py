@@ -84,6 +84,7 @@ def result_detail():
         print(f"Error: {e}")
         return redirect(url_for('auth.login_page'))
 
+
 #
 # @bp.route("/question-info",methods=['POST'])
 # def result_dashboard():

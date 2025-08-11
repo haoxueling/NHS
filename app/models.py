@@ -75,3 +75,41 @@ class Questionnaire(db.Model):
     
     def __repr__(self):
         return f'<Questionnaire {self.id} {self.type} {self.score}分 {self.level}>'
+    
+# 新增的 Answer 模型
+class Answer(db.Model):
+    __tablename__ = 'answer'
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # 关联问题和医生
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    # 回答内容和时间
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # 建立关系
+    question = db.relationship('Question', backref='answers', lazy=True)
+    doctor = db.relationship('User', backref='answers_by_doctor', lazy=True)
+    
+    def __repr__(self):
+        return f'<Answer {self.id} for Question {self.question_id}>'
+    
+# 修改 Question 模型
+class Question(db.Model):
+    __tablename__ = 'question'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref='questions', lazy=True)
+    
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # 状态字段改为 'pending'、'answered' 等
+    status = db.Column(db.String(20), default='pending')
+
+    def __repr__(self):
+        return f'<Question {self.id} by {self.user.name}>'
