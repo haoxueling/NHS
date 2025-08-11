@@ -41,6 +41,23 @@ def create_app(config_class=Config):
     app.template_folder = str(template_dir)
 
     app.config.from_object(config_class)
+    
+    # =========================================================
+    # ✅ 关键修改点: 动态配置数据库 URI
+    # =========================================================
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        # 在 Render 上，使用环境变量中的 PostgreSQL 连接字符串，并指定 psycopg2 驱动
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace(
+            'postgresql://', 'postgresql+psycopg2://'
+        )
+        # 为生产环境配置连接池，提高性能和稳定性
+        app.config['SQLALCHEMY_POOL_SIZE'] = 10
+        app.config['SQLALCHEMY_MAX_OVERFLOW'] = 20
+    else:
+        # 在本地开发，使用你原有的 MySQL 连接字符串
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/nhs_questionnaire_system'
+    # =========================================================
 
     # 配置 JWT 从 Cookie 中获取令牌
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
