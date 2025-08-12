@@ -54,6 +54,16 @@ def create_app(config_class=Config):
         # 为生产环境配置连接池，提高性能和稳定性
         app.config['SQLALCHEMY_POOL_SIZE'] = 10
         app.config['SQLALCHEMY_MAX_OVERFLOW'] = 20
+        # =========================================================
+        # ✅ 新增配置: 解决连接失效问题
+        # =========================================================
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            # 在使用连接前，先 ping 数据库，确保连接是活跃的
+            'pool_pre_ping': True,
+            # 每隔 30 分钟回收一次连接，防止因长时间不活动而失效
+            'pool_recycle': 1800  # 1800秒 = 30分钟
+        }
+        # =========================================================
     else:
         # 在本地开发，使用你原有的 MySQL 连接字符串
         app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/nhs_questionnaire_system'
