@@ -184,7 +184,7 @@
           <ul id="incompleteItems"></ul>
         </div>
 
-             <fieldset disabled>
+
           <!-- 1. 体重相关问题 -->
           <div class="question-section">
             <h4>1. Weight</h4>
@@ -446,13 +446,13 @@
 
           <!-- 按钮区域：添加Exit按钮 -->
 {#          <div class="d-flex justify-content-between action-buttons">#}
-{#            <button type="button" class="btn btn-danger me-2" id="exitBtn">Exit</button>#}
+            <button type="button" class="btn btn-danger me-2" id="exitBtn">Exit</button>
 {#            <div>#}
 {#                <a href="/user/questionnaires/phq4" class="btn btn-secondary me-2">Back</a>#}
 {#                <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Submit</button>#}
 {#            </div>#}
 {#          </div>#}
-                   <fieldset>
+
 
       </div>
     </div>
@@ -496,14 +496,10 @@
       saveData(); // 返回前保存当前数据
     });
 
-    // 退出按钮点击事件 - 清除所有问卷数据并返回仪表盘
+
+    // 退出按钮点击事件 并返回仪表盘
     $('#exitBtn').click(function () {
-      // 清除所有相关问卷的临时数据
-      localStorage.removeItem('dasi_answers');
-      localStorage.removeItem('phq4_answers');
-      localStorage.removeItem('pgsga_answers');
-      // 跳转到用户仪表盘
-      window.location.href = '/user';
+         window.history.back();
     });
 
     // 表单提交处理
