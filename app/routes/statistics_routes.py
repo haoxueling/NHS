@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.models import User, Questionnaire
 from app import db
 
@@ -25,9 +26,13 @@ def get_user_type(user):
 
 
 @statistics_bp.route('/user_type_distribution')
+@jwt_required()
+
 def user_type_distribution():
     # 从 URL 参数中获取筛选的肿瘤类型，默认是 'all'
     tumor_type = request.args.get('tumor_type', 'all')
+    doctor_id = get_jwt_identity()
+    doctor = User.query.get(doctor_id)
     print(f"当前筛选的肿瘤类型: {tumor_type}") # 调试打印
 
     # 构建基础查询，只筛选角色为 'user' 的用户
@@ -85,5 +90,7 @@ def user_type_distribution():
         type_count=type_count,
         percentages=percentages,
         total_users=total_users,
-        selected_tumor=tumor_type
+        selected_tumor=tumor_type,
+        username=doctor.name,      # 👈 导航栏使用 doctor 的名字
+        user_role=doctor.role      # 👈 导航栏使用 doctor 的角色
     )

@@ -8,7 +8,9 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    gender = db.Column(db.Enum('male', 'female', 'other'), nullable=False)
+    # ✅ 修复: 为 ENUM 类型添加了 name 参数
+    gender = db.Column(db.Enum('male', 'female', 'other', name='user_gender_enum'), nullable=False)
+    # gender = db.Column(db.Enum('male', 'female', 'other'), nullable=False)
     date_of_birth = db.Column(db.Date, nullable=False)
     medical_id = db.Column(db.String(50), unique=True, nullable=False)
     # patient 新添chi_number 终端使用 Flask-Migrate 更新数据库：
@@ -17,7 +19,9 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.Enum('user', 'nurse', 'doctor'), default='user')  # 支持医生角色
+    # ✅ 修复: 为 ENUM 类型添加了 name 参数
+    role = db.Column(db.Enum('user', 'nurse', 'doctor', name='user_role_enum'), default='user')
+    # role = db.Column(db.Enum('user', 'nurse', 'doctor'), default='user')  # 支持医生角色
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # 新增肿瘤类型字段（患者专用，允许为空不影响医生角色）
     tumor_type = db.Column(db.String(50), nullable=True)

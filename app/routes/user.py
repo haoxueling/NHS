@@ -40,7 +40,8 @@ def dashboard():
     # 直接渲染页面，不计算进度相关（后续若需展示可根据实际有数据的分问卷字段判断）
     return render_template(
         'user_dashboard.html',
-        username=User.query.get(user_id).name  # 获取用户名
+        username=User.query.get(user_id).name,# 获取用户名
+        user_role=User.query.get(user_id).role
     )
 
 
@@ -170,3 +171,59 @@ def get_user_questionnaires():
             'submitted_at': record.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
         })
     return jsonify(result), 200
+@bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def user_profile():
+    current_user_id = request.cookies.get('user_id')
+    current_user = User.query.get(current_user_id)
+
+    if request.method == 'POST':
+        # 获取表单数据
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        tumor_type = request.form.get('tumor_type')  # 允许修改肿瘤类型
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        # # 检查旧密码是否正确
+        # if new_password and not current_user.check_password(old_password):
+        #     # 这里可以添加 flash 消息提示密码错误
+        #     return redirect(url_for('user.user_profile'))
+
+        # 检查新密码和确认密码是否一致
+        if new_password and new_password != confirm_password:
+            # flash 消息提示密码不一致
+            return redirect(url_for('user.user_profile'))
+
+        # 更新用户信息
+        if email:
+            current_user.email = email
+        if phone:
+            current_user.phone = phone
+        if tumor_type:
+            current_user.tumor_type = tumor_type
+        if new_password:
+            current_user.set_password(new_password)
+        
+        db.session.commit()
+        # flash('信息更新成功！')
+        return redirect(url_for('user.user_profile'))
+
+    return render_template('user_profile.html', user=current_user,username=current_user.name, user_role=current_user.role)
+# 新增：密码验证 API 端点
+@bp.route('/check-password', methods=['POST'])
+@login_required
+def check_password():
+    user_id = request.cookies.get('user_id')
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+
+    data = request.get_json()
+    password = data.get('password')
+
+    if user.check_password(password):
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'success': False, 'message': 'Incorrect password'}), 400

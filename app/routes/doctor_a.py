@@ -1,5 +1,6 @@
 # app/routes/doctor_a.py
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, g
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.models import User, Question, Answer  # ✅ 关键修改：导入 Answer 模型
 from app import db
 from app.routes.statistics_routes import get_user_type
@@ -18,10 +19,14 @@ def check_doctor_role():
         return redirect(url_for('auth.login_page'))
 
 @doctor_a_bp.route('/qa_dashboard')
+@jwt_required()
 def qa_dashboard():
     """
     医生问答看板，显示所有用户的问题。
     """
+    
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
     # ✅ 修改：查询时加载关联的 answers 和 user
     questions = Question.query.options(
         joinedload(Question.user),
@@ -49,7 +54,7 @@ def qa_dashboard():
             'doctor_name': doctor_name
         })
     
-    return render_template('qa_dashboard.html', questions=questions_with_info)
+    return render_template('qa_dashboard.html', questions=questions_with_info, username=user.name, user_role=user.role)
 
 @doctor_a_bp.route('/answer_question/<int:question_id>', methods=['POST'])
 def answer_question(question_id):

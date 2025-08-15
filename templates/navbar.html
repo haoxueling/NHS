@@ -101,6 +101,15 @@
             <!-- 下拉菜单 -->
             <ul class="dropdown-menu dropdown-menu-end">
 
+              {% if user_role == 'user' %}
+              <li><a class="dropdown-item" href="{{ url_for('user.user_profile') }}">
+                <i class="bi bi-person me-2"></i>Profile
+              </a></li>
+              {% elif user_role == 'doctor' %}
+              <li><a class="dropdown-item" href="{{ url_for('doctor_ui.doctor_profile') }}">
+                <i class="bi bi-person me-2"></i>Profile
+              </a></li>
+              {% endif %}
               <li><a class="dropdown-item text-danger" href="/logout">
                 <i class="bi bi-box-arrow-right me-2"></i>Logout
               </a></li>

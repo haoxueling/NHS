@@ -396,7 +396,7 @@
 
           <!-- 按钮区域：移除Back按钮，添加Exit按钮 -->
           <div class="d-flex justify-content-between mt-4">
-{#            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>#}
+            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>
 {#            <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>#}
           </div>
         </form>
@@ -449,10 +449,7 @@
 
       // 退出按钮点击事件 - 清除数据并返回仪表盘
       $('#exitBtn').click(function () {
-        // 清除当前问卷的临时数据
-        localStorage.removeItem('dasi_answers');
-        // 跳转到用户仪表盘
-        window.location.href = '/user';
+          window.history.back();
       });
     });
 
