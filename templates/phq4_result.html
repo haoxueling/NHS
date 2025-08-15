@@ -317,9 +317,10 @@
 
           <!-- 按钮区域：添加Exit按钮，保留Back按钮 -->
 {#          <div class="d-flex justify-content-between mt-4">#}
-{#            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>#}
+            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>
 {#            <div>#}
-{#              <a href="/user/questionnaires/dasi" class="btn btn-secondary me-2">Back</a>#}
+{#              <a href="/user/question
+naires/dasi" class="btn btn-secondary me-2">Back</a>#}
 {#              <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>#}
 {#            </div>#}
 {#          </div>#}
@@ -368,11 +369,7 @@
         calculateScores();
       });
 
-      // 下一步按钮点击事件 - 保存数据并跳转
-      $('#nextBtn').click(function () {
-        saveData(); // 最后保存一次当前数据
-        window.location.href = '/user/questionnaires/pgsga';
-      });
+
 
       // 返回按钮点击事件 - 保存数据并返回上一个问卷
       $('#phq4Form').on('click', 'a[href="/user/questionnaires/dasi"]', function() {
@@ -382,11 +379,7 @@
       // 退出按钮点击事件 - 清除所有问卷数据并返回仪表盘
       $('#exitBtn').click(function () {
         // 清除所有相关问卷的临时数据
-        localStorage.removeItem('dasi_answers');
-        localStorage.removeItem('phq4_answers');
-        localStorage.removeItem('pgsga_answers');
-        // 跳转到用户仪表盘
-        window.location.href = '/user';
+        window.history.back();
       });
     });
 
