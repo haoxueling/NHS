@@ -1,7 +1,8 @@
 # app/routes/doctor_ui.py
 
-from flask import Blueprint, render_template, redirect, url_for,request
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from app import db
+from flask import Blueprint, jsonify, render_template, redirect, url_for,request
+from flask_jwt_extended import jwt_required, verify_jwt_in_request, get_jwt_identity
 from app.models import User,Questionnaire
 import json
 
@@ -18,7 +19,7 @@ def static_doctor_dashboard():
         if not user:
             return redirect(url_for('auth.login_page'))
 
-        return render_template('doctor_dashboard.html', username=user.name,patients = questionnaires)
+        return render_template('doctor_dashboard.html', username=user.name,patients = questionnaires,user_role=user.role)
     except Exception as e:
         # 如果 JWT 验证失败，跳转登录
         print(f"JWT 错误：{e}")
@@ -107,3 +108,56 @@ def result_detail():
 #         # 如果 JWT 验证失败，跳转登录
 #         print(f"JWT 错误：{e}")
 #         return redirect(url_for('auth.login_page'))
+
+@bp.route('/profile', methods=['GET', 'POST'])
+@jwt_required()  # 👈 新增：使用装饰器来保护视图函数
+def doctor_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    # 装饰器已经确保了用户存在，这里只需要检查角色
+    if not user or user.role != 'doctor':
+        return redirect(url_for('auth.login_page'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # 因为前端已经通过验证按钮处理了旧密码，这里不再需要检查旧密码
+        if new_password and new_password != confirm_password:
+            # flash 消息提示密码不一致
+            return redirect(url_for('doctor_ui.doctor_profile'))
+
+        if email:
+            user.email = email
+        if phone:
+            user.phone = phone
+        if new_password:
+            user.set_password(new_password)
+        
+        db.session.commit()
+        return redirect(url_for('doctor_ui.doctor_profile'))
+
+    return render_template('doctor_profile.html', user=user, username=user.name, user_role=user.role)
+
+# 新增：密码验证 API 端点
+@bp.route('/check-password', methods=['POST'])
+def check_password():
+    try:
+        verify_jwt_in_request()
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+
+        data = request.get_json()
+        password = data.get('password')
+
+        if user.check_password(password):
+            return jsonify({'success': True}), 200
+        else:
+            return jsonify({'success': False, 'message': 'Incorrect password'}), 400
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Authentication error: {str(e)}'}), 401

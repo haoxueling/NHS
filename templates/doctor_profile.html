@@ -1,0 +1,222 @@
+{% extends "navbar.html" %}
+
+{% block navbar_links %}
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/user_type_distribution">
+        <i class="bi bi-pie-chart-fill me-1"></i>Distribution
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/doctor/qa_dashboard">
+        <i class="bi bi-question-circle-fill me-1"></i>Q&A
+    </a>
+</li>
+{% endblock %}
+
+{% block main_nav_item %}
+<li class="nav-item">
+    <a class="nav-link" href="/doctor">
+        <i class="bi bi-person-circle me-1"></i>Doctor
+    </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white border-0 rounded-top-4 py-3 text-center">
+                    <h4 class="mb-0">Doctor Profile</h4>
+                </div>
+                <div class="card-body p-5">
+                    <form id="profile-form" method="POST" action="{{ url_for('doctor_ui.doctor_profile') }}">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2">Basic Information</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" value="{{ user.name }}" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="medical_id" class="form-label">Medical ID</label>
+                                <input type="text" class="form-control" id="medical_id" value="{{ user.medical_id }}" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control editable-field" id="email" name="email" value="{{ user.email }}" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control editable-field" id="phone" name="phone" value="{{ user.phone }}" disabled>
+                            </div>
+
+                            <div class="col-12 mt-5">
+                                <h5 class="text-primary border-bottom pb-2">
+                                    Change Password
+                                    <button type="button" class="btn btn-sm btn-outline-primary ms-2" id="toggle-password-btn">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </h5>
+                                <div id="password-section" class="row g-4 d-none">
+                                    <div class="col-md-12 position-relative">
+                                        <label for="old_password" class="form-label">Old Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control password-field" id="old_password" name="old_password" disabled>
+                                            <button class="btn btn-outline-secondary toggle-password" type="button"><i class="bi bi-eye"></i></button>
+                                            <button class="btn btn-primary" type="button" id="verify-password-btn">Verify</button>
+                                        </div>
+                                        <div id="password-feedback" class="invalid-feedback d-none"></div>
+                                        <div id="password-success" class="valid-feedback d-none">Password Correct</div>
+                                    </div>
+                                    <div class="col-md-6 position-relative">
+                                        <label for="new_password" class="form-label">New Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control password-field" id="new_password" name="new_password" disabled>
+                                            <button class="btn btn-outline-secondary toggle-password" type="button"><i class="bi bi-eye"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 position-relative">
+                                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control password-field" id="confirm_password" name="confirm_password" disabled>
+                                            <button class="btn btn-outline-secondary toggle-password" type="button"><i class="bi bi-eye"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light border-0 rounded-bottom-4 text-end p-4">
+                    <button type="button" id="edit-btn" class="btn btn-primary px-4 me-2">Edit Profile</button>
+                    <div id="action-buttons" class="d-none">
+                        <button type="button" id="cancel-btn" class="btn btn-secondary px-4 me-2">Cancel</button>
+                        <button type="submit" form="profile-form" class="btn btn-primary px-4">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const editBtn = document.getElementById('edit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const actionButtons = document.getElementById('action-buttons');
+        const editableFields = document.querySelectorAll('.editable-field');
+        const form = document.getElementById('profile-form');
+
+        const togglePasswordBtn = document.getElementById('toggle-password-btn');
+        const passwordSection = document.getElementById('password-section');
+        const verifyPasswordBtn = document.getElementById('verify-password-btn');
+        const oldPasswordInput = document.getElementById('old_password');
+        const newPasswordInput = document.getElementById('new_password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const passwordFeedback = document.getElementById('password-feedback');
+        const passwordSuccess = document.getElementById('password-success');
+        const passwordToggleButtons = document.querySelectorAll('.toggle-password');
+
+        const initialValues = {};
+        editableFields.forEach(field => {
+            initialValues[field.name] = field.value;
+        });
+
+        function enableEditMode() {
+            editBtn.classList.add('d-none');
+            actionButtons.classList.remove('d-none');
+            editableFields.forEach(field => {
+                field.removeAttribute('disabled');
+            });
+        }
+
+        function disableEditMode() {
+            editBtn.classList.remove('d-none');
+            actionButtons.classList.add('d-none');
+            editableFields.forEach(field => {
+                field.setAttribute('disabled', 'disabled');
+                field.value = initialValues[field.name];
+            });
+            resetPasswordSection();
+        }
+
+        function resetPasswordSection() {
+            passwordSection.classList.add('d-none');
+            oldPasswordInput.value = '';
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+            oldPasswordInput.setAttribute('disabled', 'disabled');
+            newPasswordInput.setAttribute('disabled', 'disabled');
+            confirmPasswordInput.setAttribute('disabled', 'disabled');
+            verifyPasswordBtn.classList.remove('d-none');
+            passwordFeedback.classList.add('d-none');
+            passwordSuccess.classList.add('d-none');
+        }
+
+        editBtn.addEventListener('click', enableEditMode);
+        cancelBtn.addEventListener('click', disableEditMode);
+
+        togglePasswordBtn.addEventListener('click', () => {
+            passwordSection.classList.toggle('d-none');
+            if (!passwordSection.classList.contains('d-none')) {
+                oldPasswordInput.removeAttribute('disabled');
+            } else {
+                resetPasswordSection();
+            }
+        });
+
+        verifyPasswordBtn.addEventListener('click', async () => {
+            const password = oldPasswordInput.value;
+            if (!password) {
+                passwordFeedback.textContent = 'Please enter old password';
+                passwordFeedback.classList.remove('d-none');
+                oldPasswordInput.classList.add('is-invalid');
+                return;
+            }
+            try {
+                // Note: This is the URL for the doctor_ui blueprint
+                const response = await fetch('{{ url_for("doctor_ui.check_password") }}', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    passwordSuccess.classList.remove('d-none');
+                    oldPasswordInput.classList.remove('is-invalid');
+                    oldPasswordInput.classList.add('is-valid');
+                    oldPasswordInput.setAttribute('disabled', 'disabled');
+                    verifyPasswordBtn.classList.add('d-none');
+                    newPasswordInput.removeAttribute('disabled');
+                    confirmPasswordInput.removeAttribute('disabled');
+                } else {
+                    passwordFeedback.textContent = result.message;
+                    passwordFeedback.classList.remove('d-none');
+                    oldPasswordInput.classList.add('is-invalid');
+                    oldPasswordInput.classList.remove('is-valid');
+                }
+            } catch (error) {
+                passwordFeedback.textContent = 'Verification failed, please try again later';
+                passwordFeedback.classList.remove('d-none');
+                oldPasswordInput.classList.add('is-invalid');
+            }
+        });
+
+        passwordToggleButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = btn.previousElementSibling;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                } else {
+                    input.type = 'password';
+                    btn.innerHTML = '<i class="bi bi-eye"></i>';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
