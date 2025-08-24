@@ -18,6 +18,7 @@ def my_questions():
     
     user_id = session['user_id']
     print(f"Debug: user_id from session is {user_id}") # 调试信息
+    user = User.query.get(user_id)
 
     if request.method == 'POST':
         title = request.form.get('title')
@@ -40,7 +41,7 @@ def my_questions():
     print(f"Debug: Found {len(questions)} questions for user {user_id}") # 调试信息
     
     # 禁用浏览器缓存的响应
-    resp = make_response(render_template('my_questions.html', questions=questions))
+    resp = make_response(render_template('my_questions.html', questions=questions, username=user.name, user_role=user.role))
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
     resp.headers['Expires'] = '0'

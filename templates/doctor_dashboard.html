@@ -60,7 +60,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Patient</th>
-                            <!--<th>Tumor Type</th>-->
+                            <th>Tumor Type</th>
                             <th>Physical Activity Score </th>
                             <th> Level</th>
                             <th>Psychological Wellbeing Score</th>
@@ -76,7 +76,7 @@
                             <td>{{ p.id }}</td>
                             <td class="patient-name">{{ p.user.name }}</td>
                             <!-- ✅ 新增：显示患者的肿瘤类型 -->
-                            <!--<td>{{ p.user.tumor_type }}</td>-->
+                            <td>{{ p.user.tumor_type }}</td>
                             <td>{{ p.dasi_score }}</td>
                             <td>{{ p.dasi_level }}</td>
                             <td>{{ p.phq4_score }}</td>
