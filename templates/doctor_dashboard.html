@@ -78,11 +78,26 @@
                             <!-- ✅ 新增：显示患者的肿瘤类型 -->
                             <td>{{ p.user.tumor_type }}</td>
                             <td>{{ p.dasi_score }}</td>
-                            <td>{{ p.dasi_level }}</td>
+                            <!-- ⭐ 修改：dasi_level 显示颜色 -->
+                            <td class="{% if p.dasi_level == 'Specialist' %}text-danger
+                                        {% elif p.dasi_level == 'Targeted' %}text-primary
+                                        {% elif p.dasi_level == 'Universal' %}text-success{% endif %}">
+                                 {{ p.dasi_level }}
+                            </td>
                             <td>{{ p.phq4_score }}</td>
-                            <td>{{ p.phq4_level }}</td>
-                            <td>{{ p.pgsga_score }}</td>
-                            <td>{{ p.pgsga_level }}</td>
+                        <!-- ⭐ 修改：phq4_level 显示颜色 -->
+                        <td class="{% if p.phq4_level == 'Specialist' %}text-danger
+                                    {% elif p.phq4_level == 'Targeted' %}text-primary
+                                    {% elif p.phq4_level == 'Universal' %}text-success{% endif %}">
+                                {{ p.phq4_level }}
+                        </td>
+                        <td>{{ p.pgsga_score }}</td>
+                         <!-- ⭐ 修改：pgsga_level 显示颜色 -->
+                        <td class="{% if p.pgsga_level == 'Specialist' %}text-danger
+                                    {% elif p.pgsga_level == 'Targeted' %}text-primary
+                                    {% elif p.pgsga_level == 'Universal' %}text-success{% endif %}">
+                                {{ p.pgsga_level }}
+                        </td>
                             <td><a class="btn btn-outline-primary btn-sm"
                                     href="/doctor/question-info?id={{ p.id }}&name={{ p.user.name|urlencode }}" >View</a></td>
                         </tr>
