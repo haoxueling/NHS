@@ -39,7 +39,7 @@
     </div>
 
     <form id="loginForm">
-      <!-- 角色选择 -->
+      <!-- Character Selection -->
       <div class="mb-3">
         <label for="roleSelect" class="form-label">Select Role</label>
         <select id="roleSelect" class="form-select" required>
@@ -48,7 +48,7 @@
         </select>
       </div>
 
-      <!-- 患者字段 -->
+      <!-- Patient field -->
       <div id="patientFields">
         <div class="mb-3">
           <label for="chiNumber" class="form-label">CHI Number</label>
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <!-- 临床人员字段 -->
+      <!-- Clinical Personnel Field -->
       <div id="clinicianFields" style="display: none;">
         <div class="mb-3">
           <label for="medicalId" class="form-label">Medical ID</label>
@@ -64,7 +64,7 @@
         </div>
       </div>
 
-      <!-- 密码 -->
+      <!-- Password -->
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" id="password" required>
@@ -77,14 +77,14 @@
     </form>
   </div>
 
-  <!-- jQuery 脚本 -->
+  <!-- jQuery script -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
-      // 初始化角色字段显示
+      // Initialise character field display
       $('#roleSelect').trigger('change');
 
-      // 切换显示字段
+      // Switch display fields
       $('#roleSelect').on('change', function () {
         const role = $(this).val();
         if (role === 'patient') {
@@ -96,7 +96,7 @@
         }
       });
 
-      // 登录表单提交
+      // Handle form submission
       $('#loginForm').submit(function(e) {
         e.preventDefault();
 
@@ -126,7 +126,7 @@
           };
         }
 
-        // 发送 AJAX 登录请求
+        //  Send AJAX request
         $.ajax({
           url: '/api/login',
           type: 'POST',
@@ -139,11 +139,11 @@
             console.log('Login successful:', response);
             const token = response.access_token;
 
-            // 存储 Token 和用户信息到 Cookie
+            //  Store token and user ID in cookies
             document.cookie = `access_token=${token}; path=/; SameSite=Lax`;
             document.cookie = `user_id=${response.user.id}; path=/; SameSite=Lax`;
 
-            // 跳转页面--只有doctor
+            //  Redirect based on role
             if (response.user.role === 'user'|| role === 'patient' ) {
               window.location.href = '/user';
             } else if ( response.user.role === 'doctor'|| role === 'clinician')

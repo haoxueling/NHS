@@ -3,7 +3,7 @@ from app import db
 
 app = create_app()
 
-# 创建数据库表
+# Create database tables
 with app.app_context():
     db.create_all()
 

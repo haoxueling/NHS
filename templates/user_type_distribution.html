@@ -82,7 +82,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // 获取后端传入的数据
+    // Retrieve data transmitted from the backend
     const counts = [
       {{ type_count['specialist'] }}, 
       {{ type_count['targeted'] }}, 
@@ -103,9 +103,9 @@
         datasets: [{
           data: counts,
           backgroundColor: [
-            '#dc3545', // Danger
-            '#0d6efd', // Primary
-            '#198754'  // Success
+            '#dc3545', // Specialist
+            '#0d6efd', // Targeted
+            '#198754'  // Universal
           ],
           hoverOffset: 4
         }]

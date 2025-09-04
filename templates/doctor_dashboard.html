@@ -75,24 +75,24 @@
                         <tr data-tumor-type="{{ p.user.tumor_type }}">
                             <td>{{ p.id }}</td>
                             <td class="patient-name">{{ p.user.name }}</td>
-                            <!-- ✅ 新增：显示患者的肿瘤类型 -->
+                            
                             <td>{{ p.user.tumor_type }}</td>
                             <td>{{ p.dasi_score }}</td>
-                            <!-- ⭐ 修改：dasi_level 显示颜色 -->
+                            
                             <td class="{% if p.dasi_level == 'Specialist' %}text-danger
                                         {% elif p.dasi_level == 'Targeted' %}text-primary
                                         {% elif p.dasi_level == 'Universal' %}text-success{% endif %}">
                                  {{ p.dasi_level }}
                             </td>
                             <td>{{ p.phq4_score }}</td>
-                        <!-- ⭐ 修改：phq4_level 显示颜色 -->
+                        
                         <td class="{% if p.phq4_level == 'Specialist' %}text-danger
                                     {% elif p.phq4_level == 'Targeted' %}text-primary
                                     {% elif p.phq4_level == 'Universal' %}text-success{% endif %}">
                                 {{ p.phq4_level }}
                         </td>
                         <td>{{ p.pgsga_score }}</td>
-                         <!-- ⭐ 修改：pgsga_level 显示颜色 -->
+                         
                         <td class="{% if p.pgsga_level == 'Specialist' %}text-danger
                                     {% elif p.pgsga_level == 'Targeted' %}text-primary
                                     {% elif p.pgsga_level == 'Universal' %}text-success{% endif %}">
@@ -109,7 +109,7 @@
     </div>
 </div>
 
-<!-- 引入 Bootstrap JS 依赖 -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -136,7 +136,7 @@
             });
         }
 
-        // 监听下拉菜单和搜索框的变化
+        
         tumorTypeSelect.addEventListener('change', applyFilters);
         patientSearchInput.addEventListener('input', applyFilters);
     });

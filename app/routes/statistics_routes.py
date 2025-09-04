@@ -6,7 +6,7 @@ from app import db
 statistics_bp = Blueprint('statistics', __name__)
 
 def get_user_type(user):
-    #根据用户的最新问卷结果计算并返回用户类型
+    #Calculate and return the user type based on the latest questionnaire results.
     latest_questionnaire = user.questionnaires.order_by(Questionnaire.submitted_at.desc()).first()
     
     user_type_result = 'universal'
@@ -29,28 +29,28 @@ def get_user_type(user):
 @jwt_required()
 
 def user_type_distribution():
-    # 从 URL 参数中获取筛选的肿瘤类型，默认是 'all'
+    # Retrieve the filtered tumour type from the URL parameters; the default is “all”.
     tumor_type = request.args.get('tumor_type', 'all')
     doctor_id = get_jwt_identity()
     doctor = User.query.get(doctor_id)
-    print(f"当前筛选的肿瘤类型: {tumor_type}") # 调试打印
+    print(f"Currently selected tumour type: {tumor_type}") # Debug print
 
-    # 构建基础查询，只筛选角色为 'user' 的用户
+    #   Query all users with the role 'user'
     query = db.session.query(User).filter_by(role='user')
 
-    # 如果选择了特定的肿瘤类型，则添加过滤条件
+    #   If a specific tumour type is selected, filter users by that tumour type
     if tumor_type != 'all':
         query = query.filter_by(tumor_type=tumor_type)
-        print(f"正在筛选 tumor_type = '{tumor_type}' 的用户...") # 调试打印
+        print(f"Currently filtering tumor_type = '{tumor_type}' users...") #Debug print
 
     users = query.all()
-    print(f"查询到的用户数量: {len(users)}") # 调试打印
+    print(f"Number of users retrieved: {len(users)}") #     Debug print
     
-    # 初始化用户类型计数器
+    #   Initialize counters for each user type
     type_count = {'specialist': 0, 'targeted': 0, 'universal': 0}
 
     for user in users:
-        # 获取该用户的最新问卷记录
+        #   Get the latest questionnaire for each user
         latest_questionnaire = user.questionnaires.order_by(Questionnaire.submitted_at.desc()).first()
         
         if latest_questionnaire:
@@ -83,7 +83,7 @@ def user_type_distribution():
         for key, count in type_count.items()
     }
     
-    print(f"最终计数结果: {type_count}") # 调试打印
+    print(f"Final tally: {type_count}") #   Debug print
     
     return render_template(
         'user_type_distribution.html',
@@ -91,6 +91,6 @@ def user_type_distribution():
         percentages=percentages,
         total_users=total_users,
         selected_tumor=tumor_type,
-        username=doctor.name,      # 👈 导航栏使用 doctor 的名字
-        user_role=doctor.role      # 👈 导航栏使用 doctor 的角色
+        username=doctor.name,      
+        user_role=doctor.role      
     )

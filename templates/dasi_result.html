@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- 引入 Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -12,7 +11,7 @@
       padding: 2rem 0;
     }
 
-    /* 让问卷容器更宽，最大宽度调整为 1000px */
+    /* Increase the width of the questionnaire container, adjusting the maximum width to 1000px. Adjust the maximum width to 1000px */
    .container {
       max-width: 1000px;
       width: 90%;
@@ -22,14 +21,14 @@
    .card {
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
-    /* 自定义卡片头部样式 */
+    /* Custom card header style */
     .custom-card-header {
       background-color: #49b8ab;
       border-bottom: 1px solid #ddd;
       padding: 1.25rem;
     }
 
-    /* 问题项容器， flex 布局让问题描述和按钮组水平排列 */
+    /* Question item container, flexbox layout arranges question description and button group horizontally */
     .question-item {
       display: flex;
       align-items: center;
@@ -38,32 +37,32 @@
       padding: 1rem 0;
     }
 
-    /* 按钮组容器：固定宽度 + flex，让每行按钮宽度一致 */
+    /* Button group container: Fixed width + flex, ensuring consistent button width per row */
      .btn-group-custom {
       display: flex;
-      width: 220px; /* 固定总宽度，确保每行按钮组一样宽 */
+      width: 220px; /* Fixed total width, ensuring each row of button groups is equally wide */
     }
      .btn-option {
-      flex: 1; /* 每个按钮容器各占50% */
+      flex: 1; /* Each button container occupies 50% */
     }
 
-    /* 隐藏原生单选框 */
+    /* Hide native radio buttons */
     .btn-option input[type="radio"] {
       display: none;
     }
 
-    /* 按钮样式：平分宽度 + 统一圆角 */
+    /* Button style: Equal width + Uniform rounded corners */
     .btn-option label {
-      width: 100%; /* 按钮占满父容器（即50%宽度） */
+      width: 100%; /* The button occupies the entire parent container (i.e. 50% width). */
       text-align: center;
       padding: 0.5rem 0;
       cursor: pointer;
       transition: all 0.3s ease;
       border: 1px solid #ccc;
-      margin: 0; /* 去除默认margin */
+      margin: 0; /* Remove default margins */
     }
 
-    /* No 按钮默认样式 */
+    /* No button default style */
     .btn-no {
       background-color: #eee;
       color: #666;
@@ -75,7 +74,7 @@
       background-color: #ddd;
     }
 
-    /* Yes 按钮默认样式 */
+    /* Yes button */
     .btn-yes {
       background-color: #e9ecef;
       color: #333;
@@ -86,7 +85,7 @@
       background-color: #d3d9df;
     }
 
-    /* 选中状态样式 */
+    /* Selected state style */
     .btn-option input[type="radio"]:checked + label.btn-no {
       background-color: #dc3545;
       color: #000;
@@ -97,7 +96,7 @@
       color: #000;
     }
 
-    /* 计分区域灰框样式 */
+    /* Scoring area grey border style */
     .info-section {
       margin-top: 1.5rem;
     }
@@ -142,12 +141,10 @@
     <div class="card">
       <div class="card-header custom-card-header">
         <h2>Physical Activity</h2>
-{#        <p class="text-muted">Please answer the following questions based on your actual situation（1/3）</p>#}
-{#        <p class="text-muted" style="font-size: 16px; font-weight: bold;">Are you able to:</p>#}
       </div>
       <div class="card-body">
         <form id="dasiForm">
-          <!-- 问题1 -->
+          <!-- Question 1 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Take care of self<br>e.g. eating, dressing, bathing, using the toilet</p>
             <div class="btn-group-custom">
@@ -164,7 +161,7 @@
 {#                <label>{{ result.q1 }}</label>#}
             </div>
           </div>
-          <!-- 问题2 -->
+          <!--  Question 2 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Walk indoors</p>
             <div class="btn-group-custom">
@@ -181,7 +178,7 @@
 {#                <label>{{ result.q2 }}</label>#}
             </div>
           </div>
-          <!-- 问题3 -->
+          <!-- Question 3 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Walk 1–2 blocks on level ground</p>
             <div class="btn-group-custom">
@@ -198,7 +195,7 @@
 {#                <label>{{ result.q3 }}</label>#}
             </div>
           </div>
-          <!-- 问题4 -->
+          <!-- Question 4 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Climb a flight of stairs or walk up a hill</p>
             <div class="btn-group-custom">
@@ -215,7 +212,7 @@
 {#                <label>{{ result.q4 }}</label>#}
             </div>
           </div>
-          <!-- 问题5 -->
+          <!-- Question 5 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Run a short distance</p>
             <div class="btn-group-custom">
@@ -232,7 +229,7 @@
 {#                <label>{{ result.q5 }}</label>#}
             </div>
           </div>
-          <!-- 问题6 -->
+          <!-- Question 6 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Do light work around the house<br>e.g. dusting, washing dishes</p>
             <div class="btn-group-custom">
@@ -249,7 +246,7 @@
 {#              <label>{{ result.q6 }}</label>#}
             </div>
           </div>
-          <!-- 问题7 -->
+          <!-- Question 7 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Do moderate work around the house<br>e.g. vacuuming, sweeping floors, carrying in</p>
             <div class="btn-group-custom">
@@ -266,7 +263,7 @@
 {#              <label>{{ result.q7 }}</label>#}
             </div>
           </div>
-          <!-- 问题8 -->
+          <!-- Question 8 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Do heavy work around the house<br>e.g. scrubbing floors, lifting or moving heavy furniture</p>
             <div class="btn-group-custom">
@@ -283,7 +280,7 @@
 {#              <label>{{ result.q8 }}</label>#}
             </div>
           </div>
-          <!-- 问题9 -->
+          <!-- Question 9 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Do yardwork<br>e.g. raking leaves, weeding, pushing a power mower</p>
             <div class="btn-group-custom">
@@ -300,7 +297,7 @@
 {#              <label>{{ result.q9 }}</label>#}
             </div>
           </div>
-          <!-- 问题10 -->
+          <!-- Question 10 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Have sexual relations</p>
             <div class="btn-group-custom">
@@ -317,7 +314,7 @@
 {#              <label>{{ result.q10 }}</label>#}
             </div>
           </div>
-          <!-- 问题11 -->
+          <!-- Question 11 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Participate in moderate recreational activities<br>e.g. golf, bowling, dancing, doubles tennis, throwing a baseball or football</p>
             <div class="btn-group-custom">
@@ -334,7 +331,7 @@
 {#              <label>{{ result.q11 }}</label>#}
             </div>
           </div>
-          <!-- 问题12 -->
+          <!-- Question 12 -->
           <div class="question-item">
             <p class="fw-medium mb-0">Participate in strenuous sports<br>e.g. swimming, singles tennis, football, basketball, skiing</p>
             <div class="btn-group-custom">
@@ -352,13 +349,13 @@
             </div>
           </div>
 
-          <!-- 计分区域 -->
+          <!-- Scoring Zone -->
           <div class="info-section">
-            <!-- 第一个灰框：计分结果 -->
+            <!-- First grey box: Scoring results -->
             <div class="gray-box">
               <h5>Scoring Results</h5>
               <div class="row">
-                <!-- 风险等级显示 -->
+                <!-- Risk Level Display -->
                 <div class="col-12 mt-2">
                     <p style="font-size: 24px;">Your risk level is:
                         <span id="riskLevel" class="text-success">Universal</span>
@@ -376,7 +373,7 @@
               <p>The higher the score (maximum 58.2), the higher the functional status.</p>
             </div>
 
-            <!-- 第二个灰框：Facts & Figures -->
+            <!-- Second grey box: Facts & Figures -->
             <div class="gray-box">
               <h5>Facts & Figures</h5>
               <p style="font-size: 16px;">Interpretation:</p>
@@ -385,16 +382,16 @@
               <p>VO2 peak is maximal oxygen consumption (gold standard measurement is by exercise stress testing).</p>
             </div>
 
-            <!-- 第三个灰框：ADVICE -->
+            <!-- Third grey box: ADVICE -->
             <div class="gray-box">
                 <h5>ADVICE</h5>
                 <div id="adviceContent">
-                <!-- 动态生成内容 -->
+                <!-- Dynamically generated content -->
                 </div>
             </div>
           </div>
 
-          <!-- 按钮区域：移除Back按钮，添加Exit按钮 -->
+          <!-- Button area: Remove the Back button and add an Exit button. -->
           <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>
 {#            <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>#}
@@ -404,11 +401,10 @@
     </div>
   </div>
 
-  <!-- 引入 jQuery 和 Bootstrap JS -->
+  <!-- Include jQuery and Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // 登录状态检查
     const token = document.cookie
     .split('; ')
     .find(row => row.startsWith('access_token='))
@@ -418,62 +414,62 @@
       window.location.href = 'login.html';
     }
 
-    // 页面初始化：判断是否从PHQ4返回（是则保留数据，否则清除）
+    // Detect if the user navigated from the PHQ-4 page
     const isFromPhq4 = document.referrer.includes('phq4');
     if (!isFromPhq4) {
-      // 非从PHQ4返回，清除旧数据（新开始或从仪表盘进入）
+      //  If not from PHQ-4, clear any saved data (new start)
       localStorage.removeItem('dasi_answers');
     }
 
-    // 页面加载时恢复已保存的数据（仅当存在时）
+    //  Main logic
     $(document).ready(function () {
-      // 从localStorage加载数据（如果是从PHQ4返回）
+      //  If from PHQ-4, load saved data
       if (isFromPhq4) {
         loadSavedData();
       } else {
-        // 新开始，使用默认值计算
+        //  First time loading, calculate initial scores
         calculateScores();
       }
 
-      // 监听所有单选按钮变化（实时保存+计算分数）
+      //  Radio button change event - Save data and recalculate scores
       $('input[type="radio"]').change(function () {
         saveData();
         calculateScores();
       });
 
-      // 下一步按钮点击事件 - 保存数据并跳转
+      //  Next button click event - Save data and navigate to PHQ-4
       $('#nextBtn').click(function () {
-        saveData(); // 最后保存一次当前数据
+        saveData(); //  Save data before navigating
         window.location.href = '/user/questionnaires/phq4';
       });
 
-      // 退出按钮点击事件 - 清除数据并返回仪表盘
+      //  Exit button click event - Navigate back to the previous page
       $('#exitBtn').click(function () {
           window.history.back();
       });
     });
 
-    // 从localStorage加载已保存的数据
+    //  Load saved data from localStorage
     function loadSavedData() {
       const savedData = localStorage.getItem('dasi_answers');
       if (savedData) {
         const data = JSON.parse(savedData);
-        // 恢复每个问题的选中状态
+        //  Restore answers
         for (let i = 1; i <= 12; i++) {
           if (data.answers[`q${i}`]) {
             $(`input[name="q${i}"][value="${data.answers[`q${i}`]}"]`).prop('checked', true);
           }
         }
-        // 恢复分数显示
+        //  Restore scores
         $('#dasiScore').text(data.dasi_total || '0');
         $('#metsScore').text(data.mets_score || '0');
       }
     }
 
-    // 实时保存数据到localStorage（仅在未提交状态下）
+    //  Save current answers and scores to localStorage
     function saveData() {
       const answers = {};
-      // 收集每个问题的答案
+      //  Collect answers
       for (let i = 1; i <= 12; i++) {
         answers[`q${i}`] = $(`input[name="q${i}"]:checked`).val() || '';
       }
@@ -485,34 +481,34 @@
         level: getDasiLevelByMets()
       };
 
-      // 存入localStorage（供临时返回修改使用）
+      //  Save to localStorage
       localStorage.setItem('dasi_answers', JSON.stringify(formData));
     }
 
-    // 计算DASI总分和METs分数
+    //  Calculate scores based on selected answers
     function calculateScores() {
       let total = 0;
-      // 累加所有问题的分数
+      //  Sum selected values
       for (let i = 1; i <= 12; i++) {
         const selectedValue = parseFloat($(`input[name="q${i}"]:checked`).val() || 0);
         total += selectedValue;
       }
-      // 保留一位小数
+      //  Update DASI score
       const dasiScore = total.toFixed(1);
-      // 计算VO2峰值和METs
+      //  Calculate METs
       const vo2Peak = (0.43 * total + 9.6).toFixed(2);
       const metsScore = (vo2Peak / 3.5).toFixed(2);
 
-      // 更新显示
+      //  Update scores in the UI
       $('#dasiScore').text(dasiScore);
       $('#metsScore').text(metsScore);
 
-      // 更新风险等级
+      //  Determine risk level based on METs
       const level = getDasiLevelByMets();
       const $riskLevel = $('#riskLevel');
       $riskLevel.text(level);
 
-      // 设置等级文本颜色
+      //  Update risk level color
       switch(level) {
           case 'Universal':
           $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
@@ -528,7 +524,7 @@
       updateAdvice(level);
     }
 
-    // 更新建议内容
+    //  Update advice section based on risk level
     function updateAdvice(level) {
       const linkContent = `
         <p>1. Prehabilitation for Scotland: <a href="https://www.prehab.nhs.scot/" target="_blank" rel="noopener noreferrer">https://www.prehab.nhs.scot/</a></p>
@@ -554,7 +550,7 @@
 
       const adviceParts = [];
 
-      // 非Universal等级添加红色提示
+      //  Add specific advice based on level
       if (level!== 'Universal') {
           adviceParts.push(`
           <p style="font-size: 24px; font-weight: bold; color: red;">
@@ -569,7 +565,7 @@
       $('#adviceContent').html(adviceParts.join(''));
     }
 
-    // 根据METS值判定风险等级
+    //  Determine DASI level based on METs score
     function getDasiLevelByMets() {
       const mets = parseFloat($('#metsScore').text());
       if (mets > 7) {
