@@ -3,69 +3,89 @@ from pathlib import Path
 from flask import Flask, g, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-from flask_migrate import Migrate  # 导入 Flask-Migrate
+from flask_migrate import Migrate
 from flask_cors import CORS
 from app.config import Config
 
 
-# 初始化扩展
+# Initialise the extension
 db = SQLAlchemy()
 jwt = JWTManager()
-migrate = Migrate()  # 初始化迁移工具
+migrate = Migrate()  # Initialise the migration tool
 
 
 def create_app(config_class=Config):
-    # 确定项目根目录（假设 app 文件夹与 templates 和 static 同级）
+    # Specify the project root directory (assuming the app folder is at the same level as templates and static)
     project_root = Path(__file__).parent.parent
     
-    # 显式指定 static 和 templates 文件夹的路径
+    # Explicitly specify the paths for the static and templates folders
     static_folder_path = str(project_root / "static")
     template_folder_path = str(project_root / "templates")
     
-    # 创建 Flask 应用实例，并传入正确的路径
+    # Create a Flask application instance and pass in the correct path.
     app = Flask(__name__,
                 static_folder=static_folder_path,
                 template_folder=template_folder_path)
 
-    # 构建templates绝对路径并验证
+    # Construct absolute paths for templates and validate them
     current_file = Path(__file__)
-    # 确定项目根目录（假设app文件夹与templates同级）
+    # Determine the project root directory (assuming the app folder is at the same level as the templates folder)
     project_root = current_file.parent.parent
     template_dir = project_root / "templates"
 
-    # 验证路径存在性，不存在则创建并提示
+    # Verify the existence of the path; if it does not exist, create it and provide a prompt.
     if not template_dir.exists():
         template_dir.mkdir(parents=True, exist_ok=True)
-        print(f"警告：templates文件夹不存在，已自动创建于 {template_dir}")
+        print(f"Warning: The templates folder does not exist and has been automatically created at {template_dir}")
 
     app.template_folder = str(template_dir)
 
     app.config.from_object(config_class)
-
-    # 配置 JWT 从 Cookie 中获取令牌
+    
+    
+    # Dynamically configure database URI
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        # On Render, utilise the PostgreSQL connection string from the environment variables and specify the psycopg2 driver.
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace(
+            'postgresql://', 'postgresql+psycopg2://'
+        )
+        # Configure connection pools for production environments to enhance performance and stability.
+        app.config['SQLALCHEMY_POOL_SIZE'] = 10
+        app.config['SQLALCHEMY_MAX_OVERFLOW'] = 20
+        
+        # Resolving connection failure issues
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            # Before using the connection, ping the database to ensure the connection is active.
+            'pool_pre_ping': True,
+            # Recover the connection every 30 minutes to prevent it from expiring due to prolonged inactivity.
+            'pool_recycle': 1800  
+        }
+    else:
+        # When developing locally, use the existing MySQL connection string.
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/nhs_questionnaire_system'
+    # Configure JWT to retrieve the token from the cookie
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
     app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'
     app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
-    # 初始化扩展
+    # Initialisation of extensions
     db.init_app(app)
-    migrate.init_app(app, db)  # 关联 app 和 db
+    migrate.init_app(app, db)  # Bind the migration tool to the app and database
     jwt.init_app(app)
     CORS(app, supports_credentials=True)
     
     @app.before_request
     def load_logged_in_user():
-        # """在每个请求之前加载登录用户信息。"""
         from app.models import User
         user_id = session.get('user_id')
         if user_id is None:
             g.user = None
         else:
-            # 假设你的 User 模型可以通过 id 查询
             g.user = User.query.get(user_id)
     
 
-    # 注册蓝图
+    # Register blueprints
     from app.routes.auth import bp as auth_bp
     from app.routes.user import bp as user_bp
     from app.routes.staff import bp as staff_bp

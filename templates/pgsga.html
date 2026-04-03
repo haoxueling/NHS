@@ -45,7 +45,7 @@
       font-weight: 500;
     }
 
-    /* 按钮组样式：垂直排列、等宽、左对齐 */
+    
    .btn-group-custom {
       display: flex;
       flex-direction: column;
@@ -87,7 +87,7 @@
       border-color: #3bd1cb;
     }
 
-    /* 计分区域样式 */
+    
    .info-section {
       margin-top: 1.5rem;
     }
@@ -141,7 +141,7 @@
       margin-top: 1.5rem;
     }
 
-    /* 体重输入框样式 */
+    
    .weight-inputs {
       display: flex;
       flex-wrap: wrap;
@@ -163,17 +163,17 @@
      left: 0;
      right: 0;
      bottom: 0;
-     cursor: not-allowed; /* 禁用时显示禁止光标 */
-     z-index: 1; /* 确保在按钮上方 */
-     background: transparent; /* 完全透明 */
+     cursor: not-allowed; 
+     z-index: 1; 
+     background: transparent; 
    }
 
-   /* 按钮启用时，覆盖层不拦截点击 */
+   
    #submitBtn:not(:disabled) + #submitOverlay {
-     pointer-events: none; /* 启用时让覆盖层失效 */
+     pointer-events: none; 
    }
 
-    /* 不完整提示样式 */
+    
    .alert-message {
       display: none;
       padding: 1rem;
@@ -194,14 +194,14 @@
         <p class="text-muted">Please answer the following questions based on your actual situation（3/3）</p>
       </div>
       <div class="card-body">
-        <!-- 不完整提示 -->
+        
         <div class="alert-message" id="incompleteAlert">
-          <strong>注意：</strong> 您的问卷尚未完成，请返回完成以下部分：
+          <strong>Note:</strong> Your questionnaire remains incomplete. Please return to complete the following sections:
           <ul id="incompleteItems"></ul>
         </div>
 
         <form id="pgsgaForm">
-          <!-- 1. 体重相关问题 -->
+          
           <div class="question-section">
             <h4>1. Weight</h4>
             <p class="question-text">In summary of my current and recent weight:</p>
@@ -228,7 +228,7 @@
                 <label for="weight_change-1">decreased <span>+1</span></label>
               </div>
               <div class="btn-option">
-                <input type="radio" id="weight_change-0" name="weight_change" value="unchanged.0" />
+                <input type="radio" id="weight_change-0" name="weight_change" value="unchanged.0" checked />
                 <label for="weight_change-0">not changed <span>0</span></label>
               </div>
               <div class="btn-option">
@@ -238,13 +238,13 @@
             </div>
           </div>
 
-          <!-- 2. 食物摄入问题 -->
+          
           <div class="question-section">
             <h4>2. Food intake</h4>
             <p class="question-text">As compared to my normal intake, I would rate my food intake during the past month as:</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="food_intake-0" name="food_intake" value="unchanged.0" required />
+                <input type="radio" id="food_intake-0" name="food_intake" value="unchanged.0" required checked />
                 <label for="food_intake-0">unchanged <span>0</span></label>
               </div>
               <div class="btn-option">
@@ -260,7 +260,7 @@
             <p class="question-text">I am now taking:</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="food_type-0" name="food_type" value="normal_less.1"/>
+                <input type="radio" id="food_type-0" name="food_type" value="normal_less.1" checked />
                 <label for="food_type-0">normal food but less than normal amount <span>+1</span></label>
               </div>
               <div class="btn-option">
@@ -286,13 +286,13 @@
             </div>
           </div>
 
-          <!-- 3. 症状问题（多选） -->
+          
           <div class="question-section">
             <h4>3. Symptoms</h4>
             <p class="question-text">I have had the following problems that have kept me from eating enough during the past two weeks (check all that apply)</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="checkbox" id="symptom-0" name="symptom" value="no_problem_eating.0" />
+                <input type="checkbox" id="symptom-0" name="symptom" value="no_problem_eating.0" checked />
                 <label for="symptom-0">no problem eating <span>+0</span></label>
               </div>
               <div class="btn-option">
@@ -353,13 +353,13 @@
             <p class="question-text">**Examples: depression, money, or dental problems</p>
           </div>
 
-          <!-- 4. 活动与功能问题 -->
+          
           <div class="question-section">
             <h4>4. Activities and Function</h4>
             <p class="question-text">Over the past month, I would generally rate my activity as:</p>
             <div class="btn-group-custom">
               <div class="btn-option">
-                <input type="radio" id="activity-0" name="activity" value="normal.0"/>
+                <input type="radio" id="activity-0" name="activity" value="normal.0" checked />
                 <label for="activity-0">normal with no limitations <span>+0</span></label>
               </div>
               <div class="btn-option">
@@ -381,9 +381,9 @@
             </div>
           </div>
 
-          <!-- 计分区域 -->
+          <!-- Scoring Zone -->
           <div class="info-section">
-            <!-- 1. 计分结果（含风险等级） -->
+            <!-- 1. Scoring results (including risk level) -->
             <div class="gray-box">
               <h5>Scoring Results</h5>
               <div class="row">
@@ -401,7 +401,7 @@
               </div>
             </div>
 
-            <!-- 2. 公式说明 -->
+            <!-- 2. Formula Explanation -->
             <div class="gray-box">
               <h5>FORMULA</h5>
               <p>Box 1 (weight history): additive</p>
@@ -415,19 +415,19 @@
             <div class="gray-box">
               <h5>ADVICE</h5>
               <div id="adviceContent">
-                <!-- 动态生成内容 -->
+                <!-- Dynamically generated content -->
               </div>
             </div>
           </div>
 
-          <!-- 按钮区域：添加Exit按钮 -->
+          <!-- Button area: Add an Exit button -->
           <div class="d-flex justify-content-between action-buttons">
             <button type="button" class="btn btn-danger me-2" id="exitBtn">Exit</button>
             <div>
                 <a href="/user/questionnaires/phq4" class="btn btn-primary me-2">Back</a>
                 <div style="position: relative; display: inline-block;">
                     <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Submit</button>
-                    <!-- 透明覆盖层，用于监听禁用时的点击 -->
+                    <!-- Transparent overlay for detecting clicks when listening is disabled -->
                     <div id="submitOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: not-allowed;"></div>
                 </div>
             </div>
@@ -440,7 +440,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // 登录状态检查
+  // Login Status Check
   const token = document.cookie
   .split('; ')
   .find(row => row.startsWith('access_token='))
@@ -450,68 +450,68 @@
     window.location.href = 'login.html';
   }
 
-  // 页面初始化：判断是否从PHQ4返回（是则保留数据，否则清除）
+  // Page initialisation: Determine whether returning from PHQ4 (if so, retain data; otherwise, clear).
   const isFromPhq4 = document.referrer.includes('phq4');
   if (!isFromPhq4) {
-    // 非从PHQ4返回，清除旧数据（新开始或从仪表盘进入）
+    // Not from PHQ4, clear previous data
     localStorage.removeItem('pgsga_answers');
   }
 
-  // 页面初始化
+  //  Main logic
   $(document).ready(function () {
-    loadSavedData(); // 加载本地存储
-    calculateScores(); // 初始计算分数和等级
-    checkAllAnswered(); // 检查当前问卷完整性
+    loadSavedData(); 
+    calculateScores(); 
+    checkAllAnswered(); 
 
 
 
-    // 监听所有输入变化
+    // Monitor all input changes
     $('input[type="radio"], input[type="checkbox"], input[type="number"], input[type="text"]').change(function () {
-      saveData(); // 实时保存
-      calculateScores(); // 计算分数和等级
-      checkAllAnswered(); // 检查当前问卷完整性
+      saveData(); // Save in real time
+      calculateScores(); // Recalculate scores
+      checkAllAnswered(); //  Check completeness
     });
 
-    // 初始化 Bootstrap Tooltip（如需悬浮提示）
+    // Initialise Bootstrap Tooltip (if tooltips are required)
     $('#submitBtn').tooltip({
         title: '',
         trigger: 'hover',
         placement: 'top'
     });
 
-    // 返回按钮点击事件 - 保存数据并返回上一个问卷
+    // Back button click event - Save data and return to the previous questionnaire
     $('#pgsgaForm').on('click', 'a[href="/user/questionnaires/phq4"]', function() {
-      saveData(); // 返回前保存当前数据
+      saveData(); // Save current data before returning
     });
 
-    // 退出按钮点击事件 - 清除所有问卷数据并返回仪表盘
+    // Exit button click event - Clear all questionnaire data and return to the dashboard
     $('#exitBtn').click(function () {
-      // 清除所有相关问卷的临时数据
+      // Clear all temporary data for all relevant questionnaires
       localStorage.removeItem('dasi_answers');
       localStorage.removeItem('phq4_answers');
       localStorage.removeItem('pgsga_answers');
-      // 跳转到用户仪表盘
+      // Jump to User Dashboard
       window.location.href = '/user';
     });
-    // 监听覆盖层的点击（核心）
+    // Monitoring clicks on the overlay (core)
     $('#submitOverlay').on('click', function () {
       const isDisabled = $('#submitBtn').prop('disabled');
-      console.log('按钮状态：', isDisabled);
+      console.log('Button status:', isDisabled);
       if (isDisabled) {
         alert('You have not completed all the questions');
       }
     });
 
-    // 表单提交处理
+    // Form submission processing
     $('#pgsgaForm').submit(function (e) {
       e.preventDefault();
       saveData()
-      // 检查所有三份问卷完整性
+      //  Check if all questionnaires are complete
       if (checkAllQuestionnairesComplete()) {
-        // 所有问卷都已完成，提交数据
+        //  Hide incomplete prompt
         submitAllQuestionnaires();
       } else {
-        // 显示不完整提示
+        // Show incomplete prompt
         $('#incompleteAlert').show();
       }
     });
@@ -519,7 +519,7 @@
   });
     function parseOption(v) {
       if (!v) return { label: '', score: 0 };
-      // 如果描述里未来可能含点号，可用最后一个点号作为分隔
+      //  Split by the last dot to separate label and score
       const lastDot = v.lastIndexOf('.');
       if (lastDot === -1) return { label: v, score: 0 };
       const label = v.slice(0, lastDot);
@@ -527,39 +527,39 @@
       return { label, score };
     }
 
-  // 从本地存储加载数据
+  //  Determine PG-SGA risk level based on total score
   function loadSavedData() {
     const savedData = localStorage.getItem('pgsga_answers');
     if (savedData) {
       const data = JSON.parse(savedData);
-      // 恢复体重输入
+      //  Restore input values
       $('#current_weight').val(data.current_weight || '');
       $('#height').val(data.height || '');
       $('#weight_1month').val(data.weight_1month || '');
       $('#weight_6month').val(data.weight_6month || '');
-      // 恢复单选框
+      //  Restore radio buttons
       if (data.weight_change) $('input[name="weight_change"][value="' + data.weight_change + '"]').prop('checked', true);
       if (data.food_intake) $('input[name="food_intake"][value="' + data.food_intake + '"]').prop('checked', true);
       if (data.food_type) $('input[name="food_type"][value="' + data.food_type + '"]').prop('checked', true);
       if (data.activity) $('input[name="activity"][value="' + data.activity + '"]').prop('checked', true);
-      // 恢复多选框
+      //  Restore checkboxes
       if (data.symptoms && data.symptoms.length) {
         data.symptoms.forEach(val => {
           $('input[name="symptom"][value="' + val + '"]').prop('checked', true);
         });
       }
-      // 恢复文本框
+      //  Restore text inputs
       $('#pain_detail').val(data.pain_detail || '');
       $('#other_detail').val(data.other_detail || '');
-      // 恢复分数
+      //  Restore score and level
       $('#pgsgaScore').text(data.pgsga_total || '0');
     }
   }
 
-  // 保存数据到本地存储
+  //  Save current answers to localStorage
   function saveData() {
   const answers = {
-    // 显式收集关键问题答案（防止遗漏）
+    
     weight: {
       current: $('#current_weight').val(),
       height: $('#height').val(),
@@ -582,16 +582,16 @@
     other_detail: $('#other_detail').val(),
   };
 
-  // 强制计算分数和等级（防止为空）
+  
   {#const pgsgaTotal = Number($('#pgsgaScore').text()) || 0;#}
   const pgsgaTotal = parseFloat($('#pgsgaScore').text()) || calculateScores();
   const level = getPgsgaLevel() || 'Universal';
 
   const formData = {
-    answers: answers,                  // 确保answers字段存在
-    pgsga_total: pgsgaTotal.toString(), // 确保pgsga_total字段存在（字符串类型兼容后端）
-    level: level,                      // 确保level字段存在
-    // 保留其他辅助字段（不影响提交，但便于本地恢复）
+    answers: answers,                  // Ensure the “answers” field is present
+    pgsga_total: pgsgaTotal.toString(), // Ensure pgsga_total is a string
+    level: level,                      // Ensure level is present
+    //  For easier data retrieval, also save individual fields
     current_weight: $('#current_weight').val(),
     height: $('#height').val(),
     weight_1month: $('#weight_1month').val(),
@@ -608,22 +608,22 @@
   localStorage.setItem('pgsga_answers', JSON.stringify(formData));
 }
 
-  // 计算PG-SGA总分
+  //  Determine PG-SGA risk level based on total score
   function calculateScores() {
     let total = 0;
 
-    // 1. 体重变化分数
+    // 1. Weight Change Score
     const weightChange = parseOption($('input[name="weight_change"]:checked').val() || 0).score;
     total += weightChange;
     console.log("after_weight change",total)
 
-    // 2. 食物摄入分数（取最高值）
+    // 2. Food intake score (taking the highest value)
     const foodIntake = parseOption($('input[name="food_intake"]:checked').val() || 0).score;
     const foodType = parseOption($('input[name="food_type"]:checked').val() || 0).score;
     total += Math.max(foodIntake, foodType);
     console.log("after_food",total)
 
-    // 3. 症状分数（累加）
+    //  3. Symptom score (additive)
     let symptomTotal = 0;
     $('input[name="symptom"]:checked').each(function () {
       symptomTotal += parseOption($(this).val() || 0).score;
@@ -632,21 +632,21 @@
         console.log("after_symptoms",total)
 
 
-    // 4. 活动功能分数
+    //  4. Activity score (taking the highest value)
     const activity = parseOption($('input[name="activity"]:checked').val() || '').score;
     total += activity;
         console.log("after_activity",total)
 
 
-    // 更新分数显示
+    //  Update total score display
     $('#pgsgaScore').text(total);
 
-    // 更新风险等级和ADVICE
+    //  Update risk level display
     const level = getPgsgaLevel();
     const $riskLevel = $('#riskLevel');
     $riskLevel.text(level);
 
-    // 等级颜色切换
+    //  Update risk level color and tooltip
     switch(level) {
       case 'Universal':
           $riskLevel.attr('title', 'You are at a good status');
@@ -662,20 +662,20 @@
           break;
     }
 
-    // 渲染ADVICE内容
+    //  Update tooltip content
     updateAdvice(level);
   }
 
-  // 构建ADVICE内容
+  //  Determine PG-SGA risk level based on total score
   function updateAdvice(level) {
-    // 3个通用链接
+    //  Links to external resources
     const linkContent = `
       <p>1. Prehabilitation for Scotland: <a href="https://www.prehab.nhs.scot/" target="_blank" rel="noopener noreferrer">https://www.prehab.nhs.scot/</a></p>
       <p>2. this is the link to the Prehabilitation information and workshop at Maggie's: <a href="https://www.maggies.org/what-we-offer/our-programmes/prehabilitation-getting-ready-for-treatment/" target="_blank" rel="noopener noreferrer">Prehabilitation – getting ready for treatment | Maggie's</a></p>
       <p>3. Improving cancer journey - Macmillan One to One Team: <a href="https://www.macmillan.org.uk/information-and-support/help-through-cancer/macmillan-one-to-one-support/where-we-are/macmillan-one-to-one-airth.html" target="_blank" rel="noopener noreferrer">Macmillan One to One - Airth, Scotland - | Macmillan Cancer Support</a></p>
     `;
 
-    // PG-SGA专属等级表
+    //  PG-SGA score interpretation table
     const tableContent = `
       <table class="table table-sm table-bordered mt-2">
         <thead>
@@ -695,7 +695,7 @@
 
     const adviceParts = [];
 
-    // 非Universal等级添加红色提示
+    //  Medical advice for non-Universal levels
     if (level!== 'Universal') {
       adviceParts.push(`
         <p style="font-size: 24px; font-weight: bold; color: red;">
@@ -704,59 +704,59 @@
       `);
     }
 
-    // 拼接内容
+    
     adviceParts.push(linkContent);
     adviceParts.push(tableContent);
 
-    // 更新DOM
+    //  Update advice content
     $('#adviceContent').html(adviceParts.join(''));
   }
 
-  // 检查当前PGSGA问卷所有必填项是否完成
+  //  Determine PG-SGA risk level based on total score
   function checkAllAnswered() {
-    // 检查体重输入框
+    //  Check weight inputs
     const weightInputs = ['current_weight', 'height', 'weight_1month', 'weight_6month'];
     let weightComplete = true;
     weightInputs.forEach(id => {
       if (!$('#' + id).val()) weightComplete = false;
     });
 
-    // 检查单选框组
+    //  Check all radio groups
     const radioGroups = ['weight_change', 'food_intake', 'food_type', 'activity'];
     let radioComplete = true;
     radioGroups.forEach(group => {
       if (!$('input[name="' + group + '"]:checked').length) radioComplete = false;
     });
 
-    // 检查症状多选至少选一个
+    //  Check at least one symptom selected
     const symptomComplete = $('input[name="symptom"]:checked').length > 0;
 
-    // 启用/禁用提交按钮
+    //  Enable/disable submit button
     const isDisabled =!(weightComplete && radioComplete && symptomComplete);
     $('#submitBtn').prop('disabled', isDisabled);
 
   }
 
-  // 检查所有三份问卷是否完整
+  //  Check if all questionnaires are complete
   function checkAllQuestionnairesComplete() {
     const incompleteItems = [];
 
-    // 检查DASI问卷
+    //  Check DASI questionnaire
     if (!isDasiComplete()) {
       incompleteItems.push('DASI Questionnaire');
     }
 
-    // 检查PHQ4问卷
+    //  Check PHQ-4 questionnaire
     if (!isPhq4Complete()) {
       incompleteItems.push('PHQ-4 Questionnaire');
     }
 
-    // 检查PGSGA问卷（当前问卷）
+    //  Check PG-SGA questionnaire
     if (!isPgsgaComplete()) {
       incompleteItems.push('PG-SGA Questionnaire');
     }
 
-    // 更新不完整项目列表
+    //  Display incomplete items
     const $incompleteList = $('#incompleteItems');
     $incompleteList.empty();
     incompleteItems.forEach(item => {
@@ -766,13 +766,13 @@
     return incompleteItems.length === 0;
   }
 
-  // 检查DASI问卷是否完整
+  //  Check DASI questionnaire completeness
   function isDasiComplete() {
     const dasiData = localStorage.getItem('dasi_answers');
     if (!dasiData) return false;
 
     const data = JSON.parse(dasiData);
-    // 检查12个问题是否都有答案
+    //  Check if all 12 questions have answers
     for (let i = 1; i <= 12; i++) {
       if (!data.answers ||!data.answers[`q${i}`]) {
         return false;
@@ -781,13 +781,13 @@
     return true;
   }
 
-  // 检查PHQ4问卷是否完整
+  //  Check PHQ-4 questionnaire completeness
   function isPhq4Complete() {
     const phq4Data = localStorage.getItem('phq4_answers');
     if (!phq4Data) return false;
 
     const data = JSON.parse(phq4Data);
-    // 检查4个问题是否都有答案
+    //  Check if all 4 questions have answers
     for (let i = 1; i <= 4; i++) {
       if (!data.answers ||!data.answers[`q${i}`]) {
         return false;
@@ -796,24 +796,24 @@
     return true;
   }
 
-  // 检查PGSGA问卷是否完整
+  //  Check PG-SGA questionnaire completeness
   function isPgsgaComplete() {
     const pgsgaData = localStorage.getItem('pgsga_answers');
     if (!pgsgaData) return false;
 
     const data = JSON.parse(pgsgaData);
 
-    // 检查体重输入
+    //  Check weight inputs
     if (!data.current_weight ||!data.height ||!data.weight_1month ||!data.weight_6month) {
       return false;
     }
 
-    // 检查单选问题
+    //  Check all radio groups
     if (!data.weight_change ||!data.food_intake ||!data.food_type ||!data.activity) {
       return false;
     }
 
-    // 检查症状至少选择一项
+    // Check at least one symptom selected
     if (!data.symptoms || data.symptoms.length === 0) {
       return false;
     }
@@ -822,14 +822,14 @@
   }
 
 
-  // 提交所有问卷数据到服务器
+  //  Submit all questionnaires
   function submitAllQuestionnaires() {
-    // 读取三份问卷的本地存储
+    // Retrieve all questionnaire data
     const dasiData = JSON.parse(localStorage.getItem('dasi_answers'));
     const phq4Data = JSON.parse(localStorage.getItem('phq4_answers'));
     const pgsgaData = JSON.parse(localStorage.getItem('pgsga_answers'));
 
-    // 构造合并后的提交数据
+    //  Combine all data
     const allData = {
         dasi: {
             dasi_total: dasiData.dasi_total,
@@ -849,7 +849,7 @@
         }
     };
 
-    // AJAX 提交（与后端接口对应）
+    //  Submit via AJAX
     $.ajax({
         url: '/user/questionnaires/submit-all',
         type: 'POST',
@@ -860,7 +860,7 @@
 
         data: JSON.stringify(allData),
         success: function (res) {
-            // 清理本地存储
+            //  Clear all temporary data
             ['dasi_answers', 'phq4_answers', 'pgsga_answers'].forEach(key => {
                 localStorage.removeItem(key);
             });
@@ -874,12 +874,12 @@
         },
         error: function (xhr) {
             console.error('Submission failed：', xhr.responseJSON || xhr.responseText);
-            alert(`Submission failed：${xhr.responseJSON?.msg || '服务器错误'}`);
+            alert(`Submission failed：${xhr.responseJSON?.msg || 'Server error'}`);
         }
     });
 }
 
-  // PG-SGA等级判定
+  //  Determine PG-SGA risk level based on total score
   function getPgsgaLevel() {
     const score = parseFloat($('#pgsgaScore').text());
     if (score <= 1) return 'Universal';

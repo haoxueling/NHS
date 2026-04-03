@@ -1,8 +1,8 @@
-"""严格基于NHS.pdf中的计分规则实现"""
+"""Strictly implemented in accordance with the scoring rules specified in NHS.pdf"""
 
 
 def calculate_dasi(answers):
-    """DASI问卷计分（NHS.pdf 1-1至1-52）"""
+    """DASI Questionnaire Scoring (NHS.pdf 1-1 to 1-52)"""
     score_map = {
         'self_care': 2.75 if answers.get('self_care') == 'yes' else 0,
         'walk_indoors': 1.75 if answers.get('walk_indoors') == 'yes' else 0,
@@ -19,11 +19,11 @@ def calculate_dasi(answers):
     }
     total_score = sum(score_map.values())
 
-    # 计算METs（NHS.pdf 1-46公式）
+    # Calculating METs (NHS.pdf formulae 1–46)
     vo2_peak = 0.43 * total_score + 9.6
     mets = vo2_peak / 3.5
 
-    # 等级划分（NHS.pdf 1-52）
+    # Level classification (NHS.pdf 1-51)
     if mets > 7:
         level = 'universal'
     elif 4 <= mets <= 7:
@@ -35,10 +35,10 @@ def calculate_dasi(answers):
 
 
 def calculate_phq4(answers):
-    """PHQ-4问卷计分（NHS.pdf 1-58至1-99）"""
+    """PHQ-4 Questionnaire Scoring (NHS.pdf 1-53 to 1-97)"""
     total_score = sum(answers.values())
 
-    # 等级划分（NHS.pdf 1-98）
+    # Level classification (NHS.pdf 1-96)
     if total_score <= 5:
         level = 'universal'
     elif 6 <= total_score <= 8:
@@ -50,25 +50,25 @@ def calculate_phq4(answers):
 
 
 def calculate_pgsga(answers):
-    """PG-SGA问卷计分（NHS.pdf 1-104至1-135）"""
-    # 1. 体重历史（累加，NHS.pdf 1-129）
+    """ PG-SGA Questionnaire Scoring (NHS.pdf 1-98 to 1-135)"""
+    # 1. Weight History (Cumulative, NHS.pdf 1-129)
     weight_score = answers.get('weight_change', 0)
 
-    # 2. 食物摄入（取最高分，NHS.pdf 1-130）
+    # 2.    Food Intake (Take the highest score, NHS.pdf 1-129)
     food_compare = answers.get('food_intake_compare', 0)
     food_type = answers.get('food_intake_type', 0)
     food_score = max(food_compare, food_type)
 
-    # 3. 症状（累加，NHS.pdf 1-130）
+    # 3.    Symptoms (Cumulative, NHS.pdf 1-129)
     symptoms_score = sum(answers.get('symptoms', {}).values(), 0)
 
-    # 4. 活动功能（取最高分，NHS.pdf 1-130）
+    # 4.    Activity and Function (NHS.pdf 1-130)
     activity_score = answers.get('activity_level', 0)
 
-    # 总分（累加，NHS.pdf 1-131）
+    #   Total Score
     total_score = weight_score + food_score + symptoms_score + activity_score
 
-    # 等级划分（NHS.pdf 1-135）
+    #   Level classification (NHS.pdf 1-134)
     if total_score <= 1:
         level = 'universal'
     elif 2 <= total_score <= 3:

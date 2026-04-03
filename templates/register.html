@@ -50,7 +50,7 @@
     </div>
 
     <form id="registerForm">
-      <!-- 角色选择 -->
+      <!-- Character Selection -->
       <div class="mb-3">
         <label for="roleSelect" class="form-label">Select Role</label>
         <select id="roleSelect" class="form-select" required>
@@ -59,7 +59,7 @@
         </select>
       </div>
 
-      <!-- 新增：患者专属肿瘤类型下拉框，放在角色选择下一行，占满一行 -->
+      <!-- New addition: Patient-specific tumour type dropdown menu, positioned on the line below the role selection, occupying a full line. -->
       <div class="mb-3 d-none" id="tumorTypeGroup">
         <label for="tumorType" class="form-label">Tumor Type</label>
         <select class="form-select" id="tumorType">
@@ -137,28 +137,28 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
   <script>
-    // 控制输入框显隐
+    // Control the visibility of input fields
     $('#roleSelect').on('change', function () {
       const role = $(this).val();
       if (role === 'patient') {
         $('#chiLast4Group').removeClass('d-none');
         $('#medicalIdGroup').addClass('d-none');
-        $('#tumorTypeGroup').removeClass('d-none'); // 患者显示肿瘤类型
-        $('#medicalId').val(''); // 清空值，避免误提交
+        $('#tumorTypeGroup').removeClass('d-none'); // The patient exhibits a tumour type
+        $('#medicalId').val(''); // Clear the medical ID value to avoid erroneous submission
       } else {
         $('#chiLast4Group').addClass('d-none');
         $('#medicalIdGroup').removeClass('d-none');
-        $('#tumorTypeGroup').addClass('d-none');    // 医生隐藏肿瘤类型
+        $('#tumorTypeGroup').addClass('d-none');    // The patient exhibits a tumour type
         $('#chiLast4').val('');
-        $('#tumorType').val(''); // 清空肿瘤类型值，避免误提交
+        $('#tumorType').val(''); //   Clear the tumour type value to avoid erroneous submission
       }
     }).trigger('change');
 
-    // 注册表单提交
+    //  Handle form submission
     $('#registerForm').submit(function (e) {
       e.preventDefault();
 
-      // 前端验证
+      //  Basic validation
       const password = $('#password').val();
       if (password.length < 6) {
         alert('The password length cannot be less than 6 characters');
@@ -179,11 +179,11 @@
         email: email,
         phone: phone,
         password: password,
-        role: role === 'patient' ? 'user' : 'doctor'  // 对应数据库字段
+        role: role === 'patient' ? 'user' : 'doctor'  //  role mapping
       };
       if (role === 'patient') {
         const last4 = $('#chiLast4').val();
-        const tumorType = $('#tumorType').val(); // 获取肿瘤类型
+        const tumorType = $('#tumorType').val(); //   New addition: tumour type
 
         if (!dob || !last4 || last4.length !== 4 || !tumorType) {
           alert('Please enter valid date of birth and last 4 CHI digits, and tumor type');
@@ -196,8 +196,8 @@
           String(dobObj.getMonth() + 1).padStart(2, '0') +
           String(dobObj.getFullYear()).slice(-2);  // ddmmyy
         data.chi_number = chiPrefix + last4;
-        data.medical_id = chiPrefix + last4;  // 用于登录时兼容 medical_id 字段
-        data.tumor_type = tumorType; // 新增肿瘤类型字段
+        data.medical_id = chiPrefix + last4;  //  Patient medical ID is CHI
+        data.tumor_type = tumorType; //   New addition: tumour type
       } else {
         const medicalId = $('#medicalId').val();
         if (!medicalId) {
@@ -208,9 +208,9 @@
       }
 
 
-      // 发送注册请求（路径与后端接口匹配）
+      // Submit data to the backend
       $.ajax({
-        url: '/api/register',  // 修正为后端注册接口路径
+        url: '/api/register',  //   Backend registration endpoint
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(data),

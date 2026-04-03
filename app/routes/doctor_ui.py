@@ -1,7 +1,8 @@
 # app/routes/doctor_ui.py
 
-from flask import Blueprint, render_template, redirect, url_for,request
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from app import db
+from flask import Blueprint, jsonify, render_template, redirect, url_for,request
+from flask_jwt_extended import jwt_required, verify_jwt_in_request, get_jwt_identity
 from app.models import User,Questionnaire
 import json
 
@@ -10,7 +11,7 @@ bp = Blueprint('doctor_ui', __name__, url_prefix='/doctor')
 @bp.route('/')
 def static_doctor_dashboard():
     try:
-        # 验证 JWT 是否存在并有效
+        # Verify that the JWT exists and is valid
         verify_jwt_in_request()
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
@@ -18,10 +19,10 @@ def static_doctor_dashboard():
         if not user:
             return redirect(url_for('auth.login_page'))
 
-        return render_template('doctor_dashboard.html', username=user.name,patients = questionnaires)
+        return render_template('doctor_dashboard.html', username=user.name,patients = questionnaires,user_role=user.role)
     except Exception as e:
-        # 如果 JWT 验证失败，跳转登录
-        print(f"JWT 错误：{e}")
+        # If JWT verification fails, redirect to login.
+        print(f"JWT error：{e}")
         return redirect(url_for('auth.login_page'))
 
 
@@ -32,7 +33,7 @@ def result_dashboard():
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
 
-        # 获取 GET 参数
+        # Retrieve GET parameters
         question_id = request.args.get('id')
         patient_name = request.args.get('name')
 
@@ -49,7 +50,7 @@ def result_dashboard():
         print(f"Error: {e}")
         return redirect(url_for('auth.login_page'))
 
-#查看某个问卷的其中一个板块的答案
+#View the responses for a specific section within a questionnaire
 @bp.route("/result_detail")
 def result_detail():
     try:
@@ -59,7 +60,7 @@ def result_detail():
         if not user:
             return redirect(url_for('auth.login_page'))
 
-        # 获取 GET 参数
+        # Retrieve GET parameters
         question_id = request.args.get('id')
         type = request.args.get('type')
         questionnaire=Questionnaire.query.filter_by(id=question_id).first()
@@ -84,26 +85,53 @@ def result_detail():
         print(f"Error: {e}")
         return redirect(url_for('auth.login_page'))
 
+@bp.route('/profile', methods=['GET', 'POST'])
+@jwt_required()  
+def doctor_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    if not user or user.role != 'doctor':
+        return redirect(url_for('auth.login_page'))
 
-#
-# @bp.route("/question-info",methods=['POST'])
-# def result_dashboard():
-#     try:
-#         # 验证 JWT 是否存在并有效
-#         verify_jwt_in_request()
-#         #这里的user是医生
-#         user_id = get_jwt_identity()
-#         user = User.query.get(user_id)
-#         #获取request中的问卷id
-#         data = request.get_json()
-#         question_id = data.get('id')
-#         patient_name = data.get('name')
-#
-#         if not user:
-#             return redirect(url_for('auth.login_page'))
-#
-#         return render_template('user_questionnaire_result.html', username=user.name, question_id=question_id , patient_name=patient_name )
-#     except Exception as e:
-#         # 如果 JWT 验证失败，跳转登录
-#         print(f"JWT 错误：{e}")
-#         return redirect(url_for('auth.login_page'))
+    if request.method == 'POST':
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if new_password and new_password != confirm_password:
+            # Flash message prompt: Password mismatch
+            return redirect(url_for('doctor_ui.doctor_profile'))
+
+        if email:
+            user.email = email
+        if phone:
+            user.phone = phone
+        if new_password:
+            user.set_password(new_password)
+        
+        db.session.commit()
+        return redirect(url_for('doctor_ui.doctor_profile'))
+
+    return render_template('doctor_profile.html', user=user, username=user.name, user_role=user.role)
+
+# Password Verification API Endpoint
+@bp.route('/check-password', methods=['POST'])
+def check_password():
+    try:
+        verify_jwt_in_request()
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+
+        data = request.get_json()
+        password = data.get('password')
+
+        if user.check_password(password):
+            return jsonify({'success': True}), 200
+        else:
+            return jsonify({'success': False, 'message': 'Incorrect password'}), 400
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Authentication error: {str(e)}'}), 401

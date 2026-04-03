@@ -27,7 +27,7 @@
       border-bottom: 1px solid #ddd;
     }
 
-    /* 问题项容器：水平布局 */
+    
    .question-item {
       display: flex;
       align-items: flex-start;
@@ -46,7 +46,7 @@
       margin-bottom: 0;
     }
 
-    /* 按钮组：垂直堆叠 + 固定宽度 */
+    
    .btn-group-custom {
       display: flex;
       flex-direction: column;
@@ -89,7 +89,7 @@
       border-color: #3bd1cb;
     }
 
-    /* 计分区域样式 */
+    
    .info-section {
       margin-top: 1.5rem;
     }
@@ -145,20 +145,17 @@
   </style>
 </head>
 
-{#{"q1": "2", "q2": "0", "q3": "0", "q4": "0"}#}
+
 <body>
   <div class="container">
     <div class="card">
       <div class="card-header">
         <h2>Psychological Wellbeing</h2>
-{#        <p class="text-muted">Please answer the following questions based on your actual situation（2/3）</p>#}
-{#        <p class="text-muted" style="font-size: 16px; font-weight: bold;">#}
-{#          How often have you been bothered by the following over the past 2 weeks?#}
-{#        </p>#}
+
       </div>
       <div class="card-body">
 
-          <!-- 问题1 -->
+          
           <div class="question-item">
             <div class="question-text">
               <p>1. Feeling nervous, anxious or on edge</p>
@@ -188,7 +185,7 @@
             </div>
           </div>
 
-          <!-- 问题2 -->
+          
           <div class="question-item">
             <div class="question-text">
               <p>2. Not being able to stop or control worrying</p>
@@ -218,7 +215,7 @@
             </div>
           </div>
 
-          <!-- 问题3 -->
+          
           <div class="question-item">
             <div class="question-text">
               <p>3. Feeling down, depressed or hopeless</p>
@@ -248,7 +245,7 @@
             </div>
           </div>
 
-          <!-- 问题4 -->
+          
           <div class="question-item">
             <div class="question-text">
               <p>4. Little interest or pleasure in doing things</p>
@@ -278,13 +275,13 @@
             </div>
           </div>
 
-          <!-- 计分区域 -->
+         
           <div class="info-section">
-            <!-- 1. 计分结果（含风险等级） -->
+            
             <div class="gray-box">
               <h5>Scoring Results</h5>
               <div class="row">
-                <!-- 新增：风险等级显示 -->
+                
                 <div class="col-12 mt-2">
                     <p style="font-size: 24px;">Your risk level is:
                         <span id="riskLevel" class="text-success">Universal</span>
@@ -300,26 +297,26 @@
               </div>
             </div>
 
-            <!-- 2. 公式说明（保留） -->
+            
             <div class="gray-box">
               <h5>FORMULA</h5>
               <p>Addition of the selected points.</p>
             </div>
 
-            <!-- 3. ADVICE（合并原MANAGEMENT表格） -->
+            
             <div class="gray-box">
               <h5>ADVICE</h5>
               <div id="adviceContent">
-                <!-- 动态生成内容：红色提示 + 3个链接 + PHQ-4等级表 -->
+                
               </div>
             </div>
           </div>
 
-          <!-- 按钮区域：添加Exit按钮，保留Back按钮 -->
-{#          <div class="d-flex justify-content-between mt-4">#}
-{#            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>#}
-{#            <div>#}
-{#              <a href="/user/questionnaires/dasi" class="btn btn-secondary me-2">Back</a>#}
+          
+            <button type="button" class="btn btn-danger" id="exitBtn">Exit</button>
+
+{#              <a href="/user/question
+naires/dasi" class="btn btn-secondary me-2">Back</a>#}
 {#              <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>#}
 {#            </div>#}
 {#          </div>#}
@@ -331,7 +328,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // 登录状态检查
+    // Login Status Check
     const token = document.cookie
     .split('; ')
     .find(row => row.startsWith('access_token='))
@@ -341,20 +338,20 @@
       window.location.href = 'login.html';
     }
 
-    // 页面初始化：判断是否从其他问卷返回（是则保留数据，否则清除）
+    // Page initialisation: Determine whether returning from another questionnaire (if so, retain data; otherwise, clear).
     const isFromDasi = document.referrer.includes('dasi');
     const isFromPgsga = document.referrer.includes('pgsga');
     const isFromQuestionnaireFlow = isFromDasi || isFromPgsga;
 
-    // 非从问卷流程进入时，清除当前问卷数据
+    // When not entering via the questionnaire process, clear the current questionnaire data.
     if (!isFromQuestionnaireFlow) {
       localStorage.removeItem('phq4_answers');
     }
 
-    // 页面加载初始化
+    // Page loading initialisation
     $(document).ready(function () {
-      // 从localStorage加载数据（如果是从其他问卷返回）
-      // 直接尝试加载本地存储（无论来源）
+      // Load data from localStorage (if returned from another questionnaire)
+      // Attempt to load local storage directly (regardless of source)
     const savedData = localStorage.getItem('phq4_answers');
     if (savedData) {
         loadSavedData();
@@ -362,52 +359,44 @@
         calculateScores();
     }
 
-      // 监听单选按钮变化（实时保存+计算分数）
+      // Single choice change event - save data + recalculate scores
       $('input[type="radio"]').change(function () {
         saveData();
         calculateScores();
       });
 
-      // 下一步按钮点击事件 - 保存数据并跳转
-      $('#nextBtn').click(function () {
-        saveData(); // 最后保存一次当前数据
-        window.location.href = '/user/questionnaires/pgsga';
-      });
 
-      // 返回按钮点击事件 - 保存数据并返回上一个问卷
+
+      //  Next Step button click event - submit all questionnaires
       $('#phq4Form').on('click', 'a[href="/user/questionnaires/dasi"]', function() {
-        saveData(); // 返回前保存当前数据
+        saveData(); //  Save current questionnaire data
       });
 
-      // 退出按钮点击事件 - 清除所有问卷数据并返回仪表盘
+      //  Exit button click event - return to previous page
       $('#exitBtn').click(function () {
-        // 清除所有相关问卷的临时数据
-        localStorage.removeItem('dasi_answers');
-        localStorage.removeItem('phq4_answers');
-        localStorage.removeItem('pgsga_answers');
-        // 跳转到用户仪表盘
-        window.location.href = '/user';
+        
+        window.history.back();
       });
     });
 
-    // 从localStorage加载已保存的数据
+    //  Load saved data from localStorage
     function loadSavedData() {
       const savedData = localStorage.getItem('phq4_answers');
       if (savedData) {
         const data = JSON.parse(savedData);
-        // 恢复单选框状态
+        //  Restore selected options
         for (let i = 1; i <= 4; i++) {
           if (data.answers[`q${i}`]) {
             $(`input[name="q${i}"][value="${data.answers[`q${i}`]}"]`).prop('checked', true);
           }
         }
-        // 恢复分数显示
+        //  Restore score display
         $('#phq4Score').text(data.phq4_total || '0');
-        calculateScores(); // 恢复后重新计算等级和ADVICE
+        calculateScores(); //   Recalculate to ensure consistency
       }
     }
 
-    // 实时保存数据到localStorage（仅在未提交状态下）
+    //  Save current answers to localStorage
     function saveData() {
       const answers = {};
       for (let i = 1; i <= 4; i++) {
@@ -422,7 +411,7 @@
       localStorage.setItem('phq4_answers', JSON.stringify(formData));
     }
 
-    // 计算PHQ-4总分 + 更新风险等级 + 渲染ADVICE
+    //  Calculate total score and risk level
     function calculateScores() {
       let total = 0;
       for (let i = 1; i <= 4; i++) {
@@ -431,12 +420,12 @@
       }
       $('#phq4Score').text(total);
 
-      // 风险等级判定
+      //  Determine risk level
       const level = getPhq4Level();
       const $riskLevel = $('#riskLevel');
       $riskLevel.text(level);
 
-      // 等级颜色切换
+      //  Update risk level color
       switch(level) {
         case 'Universal':
           $riskLevel.removeClass('text-danger text-primary').addClass('text-success');
@@ -449,20 +438,20 @@
           break;
       }
 
-      // 更新ADVICE内容
+      //  Update ADVICE content
       updateAdvice(level);
     }
 
-    // 构建ADVICE内容
+    //  Update ADVICE section based on risk level
     function updateAdvice(level) {
-      // 3个通用链接
+      //  Links to external resources
       const linkContent = `
         <p>1. Prehabilitation for Scotland: <a href="https://www.prehab.nhs.scot/" target="_blank" rel="noopener noreferrer">https://www.prehab.nhs.scot/</a></p>
         <p>2. this is the link to the Prehabilitation information and workshop at Maggie's: <a href="https://www.maggies.org/what-we-offer/our-programmes/prehabilitation-getting-ready-for-treatment/" target="_blank" rel="noopener noreferrer">Prehabilitation – getting ready for treatment | Maggie's</a></p>
         <p>3. Improving cancer journey - Macmillan One to One Team: <a href="https://www.macmillan.org.uk/information-and-support/help-through-cancer/macmillan-one-to-one-support/where-we-are/macmillan-one-to-one-airth.html" target="_blank" rel="noopener noreferrer">Macmillan One to One - Airth, Scotland - | Macmillan Cancer Support</a></p>
       `;
 
-      // PHQ-4专属等级表
+      //  Risk level table
       const tableContent = `
         <table class="table table-sm table-bordered mt-2">
           <thead>
@@ -482,7 +471,7 @@
 
       const adviceParts = [];
 
-      // 非Universal等级添加红色提示
+      //  Additional advice for non-Universal levels
       if (level !== 'Universal') {
         adviceParts.push(`
           <p style="font-size: 24px; font-weight: bold; color: red;">
@@ -491,15 +480,15 @@
         `);
       }
 
-      // 拼接内容
+      //  Combine all parts
       adviceParts.push(linkContent);
       adviceParts.push(tableContent);
 
-      // 更新DOM
+      //  Render to page
       $('#adviceContent').html(adviceParts.join(''));
     }
 
-    // PHQ-4等级判定规则
+    //  Determine PHQ-4 risk level based on total score
     function getPhq4Level() {
       const score = parseFloat($('#phq4Score').text());
       if (score <= 5) return 'Universal';

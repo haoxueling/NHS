@@ -1,5 +1,5 @@
 # app/routes/staff.py
-"""护士和医生接口"""
+"""Nurse-doctor interface"""
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
 from app.models import User, Questionnaire
@@ -13,17 +13,14 @@ bp = Blueprint('staff', __name__)
 @jwt_required()
 @role_required(['nurse', 'doctor'])
 def get_users():
-    """获取用户列表，支持按等级筛选"""
-    # 获取当前用户角色
+    """Retrieve the user list, supporting filtering by level"""
     current_role = get_jwt()['role']
 
-    # 获取筛选参数
     level = request.args.get('level', 'all')
 
-    # 构建查询
     query = User.query.join(Questionnaire).group_by(User.id)
 
-    # 医生默认筛选targeted和specialist
+    # Doctors default to screening targeted and specialist
     if current_role == 'doctor' and level == 'all':
         query = query.filter(Questionnaire.level.in_(['targeted', 'specialist']))
     elif level != 'all':
@@ -31,18 +28,18 @@ def get_users():
 
     users = query.all()
 
-    # 格式化返回
+    # Formatted return
     result = []
     for user in users:
-        # 计算年龄
+        # Calculate age
         dob = user.date_of_birth
         today = datetime.today()
         age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
-        # 获取最新提交时间
+        # Retrieve the latest commit time
         latest_q = user.questionnaires.order_by(Questionnaire.submitted_at.desc()).first()
 
-        # 获取各问卷分数和等级
+        # Retrieve the latest scores for each questionnaire type
         dasi = user.questionnaires.filter_by(type='dasi').order_by(Questionnaire.submitted_at.desc()).first()
         phq4 = user.questionnaires.filter_by(type='phq4').order_by(Questionnaire.submitted_at.desc()).first()
         pgsga = user.questionnaires.filter_by(type='pgsga').order_by(Questionnaire.submitted_at.desc()).first()
@@ -69,7 +66,7 @@ def get_users():
 @jwt_required()
 @role_required(['nurse', 'doctor'])
 def get_user_questionnaires(user_id):
-    """获取指定用户的问卷详情"""
+    """Retrieve all questionnaires for a specific user"""
     questionnaires = Questionnaire.query.filter_by(user_id=user_id).order_by(Questionnaire.submitted_at.desc()).all()
 
     result = []
